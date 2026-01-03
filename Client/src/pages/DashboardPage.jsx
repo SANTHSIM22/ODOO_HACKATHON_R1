@@ -96,45 +96,24 @@ function DashboardPage() {
     return Math.round(total / availableTripsOnly.length);
   };
 
-  const handlePlanNewTrip = () => {
-    navigate("/plan-trip");
-  };
-
-  // Top Regional Selections data
   const regionalSelections = [
-    { id: 1, name: "Europe", image: "" },
-    { id: 2, name: "Asia", image: "" },
-    { id: 3, name: "Americas", image: "" },
-    { id: 4, name: "Africa", image: "" },
-    { id: 5, name: "Oceania", image: "" },
+    { id: 1, name: "Europe", color: "from-blue-500 to-blue-600" },
+    { id: 2, name: "Asia", color: "from-emerald-500 to-emerald-600" },
+    { id: 3, name: "Americas", color: "from-violet-500 to-violet-600" },
+    { id: 4, name: "Africa", color: "from-amber-500 to-amber-600" },
+    { id: 5, name: "Oceania", color: "from-cyan-500 to-cyan-600" },
   ];
 
-  // Previous Trips data
   const previousTrips = [
-    {
-      id: 1,
-      destination: "Paris, France",
-      date: "Dec 2025",
-      image: "",
-    },
-    {
-      id: 2,
-      destination: "Tokyo, Japan",
-      date: "Nov 2025",
-      image: "",
-    },
-    {
-      id: 3,
-      destination: "New York, USA",
-      date: "Oct 2025",
-      image: "",
-    },
+    { id: 1, destination: "Paris, France", date: "Dec 2025" },
+    { id: 2, destination: "Tokyo, Japan", date: "Nov 2025" },
+    { id: 3, destination: "New York, USA", date: "Oct 2025" },
   ];
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-pulse text-xl text-slate-600">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-pulse text-xl text-gray-600">
           Loading your dashboard...
         </div>
       </div>
@@ -145,195 +124,192 @@ function DashboardPage() {
   const averageBudget = calculateAverageBudget();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10 border-b-2 border-rose-400">
+      <header className="bg-white shadow-sm sticky top-0 z-10 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-rose-600">GlobeTrotter</h1>
-            </div>
-            <div className="relative">
-              <div
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:bg-rose-600 transition duration-200"
-              >
-                {user.name.charAt(0).toUpperCase()}
+              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">G</span>
               </div>
+              <h1 className="text-2xl font-bold text-black">GlobeTrotter</h1>
+            </div>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => navigate("/my-trips")}
+                className="px-4 py-2 text-gray-700 font-medium hover:text-red-600 transition duration-200"
+              >
+                My Trips
+              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition duration-200"
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </button>
 
-              {/* Dropdown Menu */}
-              {isDropdownOpen && (
-                <>
-                  {/* Backdrop to close dropdown when clicking outside */}
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsDropdownOpen(false)}
-                  ></div>
+                {isDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    ></div>
 
-                  {/* Dropdown Content */}
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-rose-400 z-20 overflow-hidden">
-                    {/* User Info Section */}
-                    <div className="px-4 py-3 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-rose-400">
-                      <p className="text-sm font-semibold text-gray-800">
-                        {user.name}
-                      </p>
-                      <p className="text-xs text-gray-600 mt-1">{user.email}</p>
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-20 overflow-hidden">
+                      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                        <p className="text-sm font-semibold text-gray-800">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {user.email}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 transition duration-200 border-t border-gray-200"
+                      >
+                        <span className="font-medium">Logout</span>
+                      </button>
                     </div>
-
-                    {/* Menu Items */}
-                    <button
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        navigate("/my-trips");
-                      }}
-                      className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-orange-50 transition duration-200"
-                    >
-                      <span className="font-medium">My Trips</span>
-                    </button>
-
-                    {/* Logout Button */}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-orange-50 transition duration-200 border-t border-gray-100"
-                    >
-                      <span className="font-medium">Logout</span>
-                    </button>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-slate-800">
-            Welcome back, {user.name}! 👋
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-black">
+            Welcome back, {user.name}
           </h2>
-          <p className="text-slate-600 mt-1">
+          <p className="text-gray-600 mt-2">
             Explore amazing travel packages and book your next adventure
           </p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">
+          <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">
                   Available Packages
-                </h3>
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-2xl">🌍</span>
-                </div>
+                </p>
+                <p className="text-4xl font-bold text-black mt-2">
+                  {availableTripsCount}
+                </p>
+                <p className="text-gray-500 text-xs mt-2">
+                  Travel packages to explore
+                </p>
               </div>
-              <p className="text-4xl font-bold mb-1">{availableTripsCount}</p>
-              <p className="text-sm opacity-90">Travel packages to explore</p>
+              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                <span className="text-red-600 font-semibold">✦</span>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">
+          <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">
                   Average Price
-                </h3>
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-2xl">💰</span>
-                </div>
+                </p>
+                <p className="text-4xl font-bold text-black mt-2">
+                  ${averageBudget.toLocaleString()}
+                </p>
+                <p className="text-gray-500 text-xs mt-2">Per package</p>
               </div>
-              <p className="text-4xl font-bold mb-1">
-                ${averageBudget.toLocaleString()}
-              </p>
-              <p className="text-sm opacity-90">Per package</p>
+              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                <span className="text-red-600 font-semibold">$</span>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">
+          <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 hover:shadow-lg transition">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">
                   Special Offers
-                </h3>
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-2xl">🎁</span>
-                </div>
+                </p>
+                <p className="text-4xl font-bold text-black mt-2">
+                  {recommendedDestinations.length}
+                </p>
+                <p className="text-gray-500 text-xs mt-2">
+                  Recommended destinations
+                </p>
               </div>
-              <p className="text-4xl font-bold mb-1">
-                {recommendedDestinations.length}
-              </p>
-              <p className="text-sm opacity-90">Recommended destinations</p>
+              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                <span className="text-red-600 font-semibold">★</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Banner Section */}
-        <div className="mb-6 rounded-2xl shadow-lg overflow-hidden h-48 flex items-center justify-center relative bg-gradient-to-r from-rose-600 to-rose-500">
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-600 to-rose-500"></div>
-          <div className="relative z-10 text-center text-white">
-            <h2 className="text-4xl font-bold mb-2">
+        <div className="mb-8 rounded-2xl shadow-md overflow-hidden bg-gradient-to-r from-red-600 to-red-700 border border-red-700">
+          <div className="px-8 py-12 md:py-16 text-center">
+            <h2 className="text-4xl font-bold text-white mb-3">
               Discover Your Next Adventure
             </h2>
-            <p className="text-lg opacity-90">
+            <p className="text-red-100 text-lg">
               Explore the world with GlobeTrotter
             </p>
           </div>
         </div>
 
         {/* Search Bar with Filters */}
-        <div className="mb-6 bg-white rounded-xl shadow-md p-4">
-          <div className="flex flex-col md:flex-row gap-3 items-center">
+        <div className="mb-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="flex-1 w-full">
               <input
                 type="text"
                 placeholder="Search for destinations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-rose-600 transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
               />
             </div>
             <div className="flex gap-2 w-full md:w-auto">
-              <button className="flex-1 md:flex-none px-4 py-2.5 bg-white border-2 border-rose-400 text-rose-600 rounded-lg hover:bg-orange-50 transition font-semibold text-sm">
+              <button className="flex-1 md:flex-none px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm">
                 Group by
               </button>
-              <button className="flex-1 md:flex-none px-4 py-2.5 bg-white border-2 border-rose-400 text-rose-600 rounded-lg hover:bg-orange-50 transition font-semibold text-sm">
+              <button className="flex-1 md:flex-none px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm">
                 Filter
               </button>
-              <button className="flex-1 md:flex-none px-4 py-2.5 bg-white border-2 border-rose-400 text-rose-600 rounded-lg hover:bg-orange-50 transition font-semibold text-sm">
-                Sort by...
+              <button className="flex-1 md:flex-none px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm">
+                Sort by
               </button>
             </div>
           </div>
         </div>
 
         {/* Available Travel Packages */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="text-2xl font-bold text-slate-800">
-                Available Travel Packages
-              </h3>
-              <p className="text-sm text-slate-600 mt-1">
-                Browse and book amazing destinations
-              </p>
-            </div>
+        <div className="mb-12">
+          <div className="mb-6">
+            <h3 className="text-2xl font-bold text-black">
+              Available Travel Packages
+            </h3>
+            <p className="text-gray-600 text-sm mt-2">
+              Browse and book amazing destinations
+            </p>
           </div>
 
           {availableTrips.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
-              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-4xl">✈️</span>
+            <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-12 text-center">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl font-bold text-gray-400">→</span>
               </div>
-              <h4 className="text-xl font-semibold text-slate-800 mb-2">
-                No packages available yet!
+              <h4 className="text-xl font-bold text-gray-800 mb-2">
+                No packages available yet
               </h4>
-              <p className="text-slate-600 mb-6">
+              <p className="text-gray-600">
                 Check back soon for exciting travel packages
               </p>
             </div>
@@ -342,63 +318,59 @@ function DashboardPage() {
               {availableTrips.map((trip) => (
                 <div
                   key={trip.id}
-                  className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-indigo-300 transition-all duration-300 group cursor-pointer"
+                  className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer"
                 >
                   {trip.imageUrl ? (
-                    <div className="relative h-56 overflow-hidden bg-slate-100">
+                    <div className="relative h-56 overflow-hidden bg-gray-100">
                       <img
                         src={trip.imageUrl}
                         alt={trip.destination}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {
                           e.target.style.display = "none";
-                          e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-6xl">${trip.image}</div>`;
+                          e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 font-semibold">Image</div>`;
                         }}
                       />
-                      <div className="absolute top-3 right-3">
+                      <div className="absolute top-4 right-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
+                          className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${
                             trip.status === "available"
-                              ? "bg-emerald-500/90 text-white"
-                              : "bg-slate-500/90 text-white"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-200 text-gray-700"
                           }`}
                         >
-                          {trip.status === "available"
-                            ? "🟢 Available"
-                            : "⚪ Past"}
+                          {trip.status === "available" ? "Available" : "Past"}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="relative h-56 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
-                      <span className="text-7xl">{trip.image}</span>
-                      <div className="absolute top-3 right-3">
+                    <div className="relative h-56 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                      <span className="text-gray-400 font-semibold">Image</span>
+                      <div className="absolute top-4 right-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
+                          className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${
                             trip.status === "available"
-                              ? "bg-emerald-500/90 text-white"
-                              : "bg-slate-500/90 text-white"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-200 text-gray-700"
                           }`}
                         >
-                          {trip.status === "available"
-                            ? "🟢 Available"
-                            : "⚪ Past"}
+                          {trip.status === "available" ? "Available" : "Past"}
                         </span>
                       </div>
                     </div>
                   )}
                   <div className="p-6">
-                    <h4 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-indigo-600 transition">
+                    <h4 className="text-xl font-bold text-black mb-2 group-hover:text-red-600 transition">
                       {trip.destination}
                     </h4>
                     {trip.description && (
-                      <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                         {trip.description}
                       </p>
                     )}
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-sm text-slate-600">
-                        <span className="mr-2">📅</span>
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <span className="mr-2 font-semibold">📍</span>
                         <span>
                           {new Date(trip.startDate).toLocaleDateString(
                             "en-US",
@@ -414,11 +386,10 @@ function DashboardPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm">
-                          <span className="mr-2">💵</span>
-                          <span className="font-bold text-slate-800 text-lg">
+                          <span className="font-bold text-black text-lg">
                             ${trip.budget.toLocaleString()}
                           </span>
-                          <span className="text-xs text-slate-500 ml-1">
+                          <span className="text-xs text-gray-500 ml-2">
                             per person
                           </span>
                         </div>
@@ -426,9 +397,9 @@ function DashboardPage() {
                     </div>
                     <button
                       onClick={() => handleBookTrip(trip.id)}
-                      className="w-full bg-indigo-600 text-white py-2.5 rounded-xl hover:bg-indigo-700 transition font-semibold text-sm shadow-lg shadow-indigo-500/30"
+                      className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition font-semibold text-sm shadow-sm"
                     >
-                      Book Now →
+                      Book Now
                     </button>
                   </div>
                 </div>
@@ -438,58 +409,56 @@ function DashboardPage() {
         </div>
 
         {/* Recommended Destinations */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="text-2xl font-bold text-slate-800">
-                Recommended Destinations
-              </h3>
-              <p className="text-sm text-slate-600 mt-1">
-                Handpicked by our travel experts
-              </p>
-            </div>
+        <div className="mb-12">
+          <div className="mb-6">
+            <h3 className="text-2xl font-bold text-black">
+              Recommended Destinations
+            </h3>
+            <p className="text-gray-600 text-sm mt-2">
+              Handpicked by our travel experts
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedDestinations.map((destination) => (
               <div
                 key={destination.id}
-                className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-indigo-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
+                className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
               >
                 {destination.imageUrl ? (
-                  <div className="relative h-48 overflow-hidden bg-slate-100">
+                  <div className="relative h-48 overflow-hidden bg-gray-100">
                     <img
                       src={destination.imageUrl}
                       alt={destination.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         e.target.style.display = "none";
-                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-6xl">${destination.image}</div>`;
+                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 font-semibold">Image</div>`;
                       }}
                     />
                   </div>
                 ) : (
-                  <div className="h-48 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
-                    <span className="text-6xl">{destination.image}</span>
+                  <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                    <span className="text-gray-400 font-semibold">Image</span>
                   </div>
                 )}
                 <div className="p-5">
-                  <h4 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-indigo-600 transition">
+                  <h4 className="text-lg font-bold text-black mb-2 group-hover:text-red-600 transition">
                     {destination.name}
                   </h4>
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                     {destination.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-slate-500">Starting from</p>
-                      <p className="text-lg font-bold text-slate-800">
+                      <p className="text-xs text-gray-500">Starting from</p>
+                      <p className="text-lg font-bold text-black">
                         ${destination.estimatedBudget.toLocaleString()}
                       </p>
                     </div>
                     <button
                       onClick={() => handleBookTrip(destination.id)}
-                      className="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition text-sm font-semibold shadow-lg shadow-indigo-500/30"
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold shadow-sm"
                     >
                       Book
                     </button>
@@ -501,31 +470,27 @@ function DashboardPage() {
         </div>
 
         {/* Top Regional Selections */}
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-rose-600 mb-4">
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold text-black mb-6">
             Top Regional Selections
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {regionalSelections.map((region) => (
               <div
                 key={region.id}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border-2 border-transparent hover:border-rose-400"
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-red-300"
               >
-                <div className="aspect-square bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center overflow-hidden">
-                  {region.image ? (
-                    <img
-                      src={region.image}
-                      alt={region.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-gray-400 text-sm">
-                      Image placeholder
-                    </div>
-                  )}
+                <div
+                  className={`aspect-square bg-gradient-to-br ${region.color} flex items-center justify-center`}
+                >
+                  <span className="text-white font-semibold text-sm">
+                    {region.name.charAt(0)}
+                  </span>
                 </div>
                 <div className="p-4 text-center">
-                  <h4 className="font-bold text-gray-800">{region.name}</h4>
+                  <h4 className="font-semibold text-gray-800 text-sm">
+                    {region.name}
+                  </h4>
                 </div>
               </div>
             ))}
@@ -533,26 +498,16 @@ function DashboardPage() {
         </div>
 
         {/* Previous Trips */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-2xl font-bold text-rose-600">Previous Trips</h3>
-          </div>
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold text-black mb-6">Previous Trips</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {previousTrips.map((trip) => (
               <div
                 key={trip.id}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border-2 border-transparent hover:border-rose-400"
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-red-300"
               >
-                <div className="h-40 bg-gradient-to-br from-rose-600 to-rose-500 flex items-center justify-center overflow-hidden">
-                  {trip.image ? (
-                    <img
-                      src={trip.image}
-                      alt={trip.destination}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-white text-sm">Image placeholder</div>
-                  )}
+                <div className="h-40 bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center">
+                  <span className="text-gray-400 font-semibold">Image</span>
                 </div>
                 <div className="p-5">
                   <h4 className="text-lg font-bold text-gray-800 mb-1">
@@ -564,23 +519,13 @@ function DashboardPage() {
             ))}
           </div>
         </div>
-
-        {/* Plan a Trip Button */}
-        <div className="flex justify-end mb-8">
-          <button
-            onClick={handlePlanNewTrip}
-            className="bg-rose-600 text-white px-6 py-3 rounded-full hover:bg-rose-500 transition duration-300 font-semibold shadow-lg transform hover:scale-105"
-          >
-            <span>Plan a trip</span>
-          </button>
-        </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white mt-12 border-t-2 border-rose-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <footer className="bg-white mt-12 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <p className="text-center text-gray-600 text-sm">
-            © 2026 GlobeTrotter. Your journey begins here. 🌍
+            © 2026 GlobeTrotter. Your journey begins here.
           </p>
         </div>
       </footer>
