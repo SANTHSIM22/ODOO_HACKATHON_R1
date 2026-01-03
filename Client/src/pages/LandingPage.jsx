@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 function LandingPage() {
   const [isVisible, setIsVisible] = useState({});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const sectionRefs = useRef({});
 
   useEffect(() => {
@@ -39,6 +40,19 @@ function LandingPage() {
       });
     };
   }, []);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const addToRefs = (id) => (el) => {
     if (el) sectionRefs.current[id] = el;
@@ -223,6 +237,8 @@ function LandingPage() {
               <p className="text-xs text-gray-500 -mt-0.5">Travel Planning</p>
             </div>
           </div>
+
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-10 animate-fade-in-down">
             <a
               href="#features"
@@ -253,7 +269,9 @@ function LandingPage() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-700 transition-all duration-300 group-hover:w-full"></span>
             </a>
           </nav>
-          <div className="flex items-center space-x-4 animate-fade-in-right">
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden lg:flex items-center space-x-4 animate-fade-in-right">
             <Link
               to="/login"
               className="px-5 py-2.5 text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-sm"
@@ -267,7 +285,41 @@ function LandingPage() {
               Get Started
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="w-6 h-6 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {isMobileMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
         </div>
+
+
+
+
       </header>
 
       <main>
@@ -546,9 +598,8 @@ function LandingPage() {
         <section
           id="stats"
           ref={addToRefs("stats")}
-          className={`border-y border-gray-100 bg-white transition-all duration-1000 ${
-            isVisible.stats ? "opacity-100" : "opacity-0"
-          }`}
+          className={`border-y border-gray-100 bg-white transition-all duration-1000 ${isVisible.stats ? "opacity-100" : "opacity-0"
+            }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -560,9 +611,8 @@ function LandingPage() {
               ].map((stat, i) => (
                 <div
                   key={i}
-                  className={`text-center transition-all duration-700 ${
-                    isVisible.stats ? "animate-fade-in-up" : "opacity-0"
-                  }`}
+                  className={`text-center transition-all duration-700 ${isVisible.stats ? "animate-fade-in-up" : "opacity-0"
+                    }`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <p className="text-4xl lg:text-5xl font-bold gradient-text">
@@ -580,9 +630,8 @@ function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div
-                className={`transition-all duration-1000 ${
-                  isVisible.about ? "animate-fade-in-left" : "opacity-0"
-                }`}
+                className={`transition-all duration-1000 ${isVisible.about ? "animate-fade-in-left" : "opacity-0"
+                  }`}
               >
                 <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
                   Our Vision
@@ -622,9 +671,8 @@ function LandingPage() {
               </div>
 
               <div
-                className={`grid grid-cols-2 gap-5 transition-all duration-1000 ${
-                  isVisible.about ? "animate-fade-in-right" : "opacity-0"
-                }`}
+                className={`grid grid-cols-2 gap-5 transition-all duration-1000 ${isVisible.about ? "animate-fade-in-right" : "opacity-0"
+                  }`}
               >
                 {[
                   {
@@ -731,9 +779,8 @@ function LandingPage() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div
-              className={`text-center mb-20 transition-all duration-1000 ${
-                isVisible.features ? "animate-fade-in-up" : "opacity-0"
-              }`}
+              className={`text-center mb-20 transition-all duration-1000 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"
+                }`}
             >
               <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
                 Platform Features
@@ -873,9 +920,8 @@ function LandingPage() {
               ].map((feature, i) => (
                 <div
                   key={i}
-                  className={`bg-white rounded-2xl p-8 border border-gray-100 hover-lift transition-all duration-700 ${
-                    isVisible.features ? "animate-fade-in-up" : "opacity-0"
-                  }`}
+                  className={`bg-white rounded-2xl p-8 border border-gray-100 hover-lift transition-all duration-700 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"
+                    }`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl flex items-center justify-center mb-6 border border-red-100">
@@ -906,9 +952,8 @@ function LandingPage() {
           </div>
 
           <div
-            className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 transition-all duration-1000 ${
-              isVisible.cta ? "animate-fade-in-up" : "opacity-0"
-            }`}
+            className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 transition-all duration-1000 ${isVisible.cta ? "animate-fade-in-up" : "opacity-0"
+              }`}
           >
             <div className="text-center max-w-3xl mx-auto">
               <h3 className="text-4xl lg:text-5xl font-bold text-white mb-6">
@@ -1076,6 +1121,72 @@ function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Mobile Menu Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 top-[73px] bg-black/40 z-30 transition-opacity duration-300"
+          style={{
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)'
+          }}
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile Menu Overlay - Side Drawer */}
+      <div
+        className={`lg:hidden fixed top-[73px] bottom-0 right-0 w-3/4 max-w-sm bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <nav className="flex flex-col px-4 py-6 space-y-4 h-full overflow-y-auto">
+          <a
+            href="#features"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-base py-3 px-4 rounded-lg hover:bg-red-50"
+          >
+            Features
+          </a>
+          <a
+            href="#how-it-works"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-base py-3 px-4 rounded-lg hover:bg-red-50"
+          >
+            How It Works
+          </a>
+          <a
+            href="#about"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-base py-3 px-4 rounded-lg hover:bg-red-50"
+          >
+            About
+          </a>
+          <a
+            href="#testimonials"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-base py-3 px-4 rounded-lg hover:bg-red-50"
+          >
+            Testimonials
+          </a>
+
+          <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
+            <Link
+              to="/login"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-center px-5 py-3 text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-base border border-gray-300 rounded-lg hover:border-red-700"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/register"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-center px-6 py-3 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition-all duration-300 font-medium text-base shadow-lg shadow-red-200"
+            >
+              Get Started
+            </Link>
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }
