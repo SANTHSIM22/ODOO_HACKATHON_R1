@@ -206,6 +206,12 @@ const UserProfilePage = () => {
                 My Trips
               </button>
               <button
+                onClick={() => navigate("/community-tab")}
+                className="px-5 py-2 text-gray-700 hover:text-red-600 font-semibold transition"
+              >
+                Community
+              </button>
+              <button
                 onClick={handleLogout}
                 className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
               >
