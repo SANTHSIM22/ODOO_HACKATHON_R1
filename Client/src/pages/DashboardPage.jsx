@@ -142,12 +142,38 @@ function DashboardPage() {
               >
                 My Trips
               </button>
+              <button
+                onClick={() => navigate("/community-tab")}
+                className="px-4 py-2 text-gray-700 font-medium hover:text-red-600 transition duration-200"
+              >
+                Community
+              </button>
+              <button
+                onClick={() => navigate("/dashboard/profile")}
+                className="px-4 py-2 text-gray-700 font-medium hover:text-red-600 transition duration-200"
+              >
+                Profile
+              </button>
               <div className="relative">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition duration-200"
+                  className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition duration-200 overflow-hidden"
                 >
-                  {user.name.charAt(0).toUpperCase()}
+                  {user.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML = `<span class="text-white font-semibold">${user.name
+                          .charAt(0)
+                          .toUpperCase()}</span>`;
+                      }}
+                    />
+                  ) : (
+                    user.name.charAt(0).toUpperCase()
+                  )}
                 </button>
 
                 {isDropdownOpen && (

@@ -335,6 +335,12 @@ function TripDetailPage() {
             </div>
             <div className="flex gap-3">
               <button
+                onClick={() => navigate("/dashboard/profile")}
+                className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+              >
+                Profile
+              </button>
+              <button
                 onClick={() => navigate(`/trip/${tripId}/itinerary`)}
                 className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold shadow-md"
               >
