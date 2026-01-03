@@ -9,6 +9,8 @@ const CommunityPage = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("newest");
     const [formData, setFormData] = useState({
         placeName: "",
         location: "",

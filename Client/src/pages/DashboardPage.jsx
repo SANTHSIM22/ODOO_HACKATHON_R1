@@ -29,21 +29,24 @@ function DashboardPage() {
     try {
       const response = await fetch(`${API_URL}/trips`);
       const data = await response.json();
-      if (data.success) {
-        const formattedTrips = data.trips.map((trip) => ({
-          id: trip._id,
-          destination: trip.destination,
-          description: trip.description,
-          startDate: trip.startDate,
-          endDate: trip.endDate,
-          budget: trip.budget,
-          status: new Date(trip.startDate) > new Date() ? "available" : "past",
-          image: trip.image,
-          imageUrl: trip.imageUrl,
-          category: trip.category,
-        }));
-        setAvailableTrips(formattedTrips);
-      }
+      const tripsArray = Array.isArray(data)
+        ? data
+        : data.success
+        ? data.trips
+        : [];
+      const formattedTrips = tripsArray.map((trip) => ({
+        id: trip._id,
+        destination: trip.destination,
+        description: trip.description,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        budget: trip.budget,
+        status: new Date(trip.startDate) > new Date() ? "available" : "past",
+        image: trip.image,
+        imageUrl: trip.imageUrl,
+        category: trip.category,
+      }));
+      setAvailableTrips(formattedTrips);
     } catch (error) {
       console.error("Error fetching trips:", error);
       setAvailableTrips([]);
@@ -54,17 +57,20 @@ function DashboardPage() {
     try {
       const response = await fetch(`${API_URL}/trips/recommended`);
       const data = await response.json();
-      if (data.success) {
-        const formattedDestinations = data.trips.map((trip) => ({
-          id: trip._id,
-          name: trip.destination,
-          description: trip.description,
-          estimatedBudget: trip.budget,
-          image: trip.image,
-          imageUrl: trip.imageUrl,
-        }));
-        setRecommendedDestinations(formattedDestinations);
-      }
+      const tripsArray = Array.isArray(data)
+        ? data
+        : data.success
+        ? data.trips
+        : [];
+      const formattedDestinations = tripsArray.map((trip) => ({
+        id: trip._id,
+        name: trip.destination,
+        description: trip.description,
+        estimatedBudget: trip.budget,
+        image: trip.image,
+        imageUrl: trip.imageUrl,
+      }));
+      setRecommendedDestinations(formattedDestinations);
     } catch (error) {
       console.error("Error fetching recommended trips:", error);
       setRecommendedDestinations([]);
@@ -122,6 +128,28 @@ function DashboardPage() {
 
   const availableTripsCount = calculateTotalTrips();
   const averageBudget = calculateAverageBudget();
+
+  // Filter trips based on search query
+  const filteredAvailableTrips = availableTrips.filter((trip) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      trip.destination?.toLowerCase().includes(query) ||
+      trip.description?.toLowerCase().includes(query) ||
+      trip.category?.toLowerCase().includes(query)
+    );
+  });
+
+  const filteredRecommendedDestinations = recommendedDestinations.filter(
+    (destination) => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        destination.name?.toLowerCase().includes(query) ||
+        destination.description?.toLowerCase().includes(query)
+      );
+    }
+  );
 
   return (
     <div className="min-h-screen bg-white">
@@ -324,24 +352,36 @@ function DashboardPage() {
             </h3>
             <p className="text-gray-600 text-sm mt-2">
               Browse and book amazing destinations
+              {searchQuery && (
+                <span className="text-red-600 font-semibold">
+                  {" "}
+                  - {filteredAvailableTrips.length} result
+                  {filteredAvailableTrips.length !== 1 ? "s" : ""} for "
+                  {searchQuery}"
+                </span>
+              )}
             </p>
           </div>
 
-          {availableTrips.length === 0 ? (
+          {filteredAvailableTrips.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-12 text-center">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl font-bold text-gray-400">→</span>
               </div>
               <h4 className="text-xl font-bold text-gray-800 mb-2">
-                No packages available yet
+                {searchQuery
+                  ? `No packages found for "${searchQuery}"`
+                  : "No packages available yet"}
               </h4>
               <p className="text-gray-600">
-                Check back soon for exciting travel packages
+                {searchQuery
+                  ? "Try a different search term"
+                  : "Check back soon for exciting travel packages"}
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {availableTrips.map((trip) => (
+              {filteredAvailableTrips.map((trip) => (
                 <div
                   key={trip.id}
                   className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer"
@@ -442,57 +482,72 @@ function DashboardPage() {
             </h3>
             <p className="text-gray-600 text-sm mt-2">
               Handpicked by our travel experts
+              {searchQuery && filteredRecommendedDestinations.length > 0 && (
+                <span className="text-red-600 font-semibold">
+                  {" "}
+                  - {filteredRecommendedDestinations.length} result
+                  {filteredRecommendedDestinations.length !== 1 ? "s" : ""}
+                </span>
+              )}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recommendedDestinations.map((destination) => (
-              <div
-                key={destination.id}
-                className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
-              >
-                {destination.imageUrl ? (
-                  <div className="relative h-48 overflow-hidden bg-gray-100">
-                    <img
-                      src={destination.imageUrl}
-                      alt={destination.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 font-semibold">Image</div>`;
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                    <span className="text-gray-400 font-semibold">Image</span>
-                  </div>
-                )}
-                <div className="p-5">
-                  <h4 className="text-lg font-bold text-black mb-2 group-hover:text-red-600 transition">
-                    {destination.name}
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {destination.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-500">Starting from</p>
-                      <p className="text-lg font-bold text-black">
-                        ${destination.estimatedBudget.toLocaleString()}
-                      </p>
+          {filteredRecommendedDestinations.length === 0 && searchQuery ? (
+            <div className="bg-white rounded-2xl shadow-md border border-dashed border-gray-300 p-8 text-center">
+              <p className="text-gray-500">
+                No recommended destinations match your search
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredRecommendedDestinations.map((destination) => (
+                <div
+                  key={destination.id}
+                  className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
+                >
+                  {destination.imageUrl ? (
+                    <div className="relative h-48 overflow-hidden bg-gray-100">
+                      <img
+                        src={destination.imageUrl}
+                        alt={destination.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 font-semibold">Image</div>`;
+                        }}
+                      />
                     </div>
-                    <button
-                      onClick={() => handleBookTrip(destination.id)}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold shadow-sm"
-                    >
-                      Book
-                    </button>
+                  ) : (
+                    <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                      <span className="text-gray-400 font-semibold">Image</span>
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <h4 className="text-lg font-bold text-black mb-2 group-hover:text-red-600 transition">
+                      {destination.name}
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {destination.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-gray-500">Starting from</p>
+                        <p className="text-lg font-bold text-black">
+                          ${destination.estimatedBudget.toLocaleString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleBookTrip(destination.id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold shadow-sm"
+                      >
+                        Book
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Top Regional Selections */}
