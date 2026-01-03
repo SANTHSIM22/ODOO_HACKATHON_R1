@@ -10,6 +10,7 @@ import MyTripsPage from "./pages/MyTripsPage";
 import CustomTripPage from "./pages/CustomTripPage";
 import TripDetailPage from "./pages/TripDetailPage";
 import ItineraryViewPage from "./pages/ItineraryViewPage";
+import PlanTripPage from "./pages/PlanTripPage";
 import "./App.css";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/custom-trip" element={<CustomTripPage />} />
         <Route path="/trip/:tripId" element={<TripDetailPage />} />
         <Route path="/trip/:tripId/itinerary" element={<ItineraryViewPage />} />
+        <Route path="/plan-trip" element={<PlanTripPage />} />
       </Routes>
     </Router>
   );
