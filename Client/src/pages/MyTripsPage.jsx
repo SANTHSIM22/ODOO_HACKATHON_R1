@@ -187,6 +187,12 @@ function MyTripsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <button
+                  onClick={() => navigate("/community-tab")}
+                  className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+                >
+                  Community
+                </button>
+                <button
                   onClick={() => navigate("/dashboard/profile")}
                   className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
                 >
