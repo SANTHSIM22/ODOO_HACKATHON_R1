@@ -67,20 +67,22 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative">
-      <AnimatedBackground />
-      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+    <div className="min-h-screen bg-white">
+      <Navbar
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
       <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden">
 
 
         {/* Main Container */}
         <div className="relative z-10 w-full max-w-md">
-
-
           {/* Login Card */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome Back
+            </h2>
             <p className="text-gray-600 text-sm mb-6">
               Sign in to continue planning your adventures
             </p>
@@ -166,7 +168,8 @@ function LoginPage() {
           {/* Trust Badge */}
           <div className="mt-8 text-center animate-fade-in-up">
             <p className="text-gray-500 text-xs flex items-center justify-center gap-2">
-              <span className="text-green-500">✓</span> Secure login • Your data is encrypted
+              <span className="text-green-500">✓</span> Secure login • Your data
+              is encrypted
             </p>
           </div>
         </div>
