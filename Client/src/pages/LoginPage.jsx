@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import AnimatedBackground from "../components/layout/AnimatedBackground";
 
 const API_URL = "http://localhost:5000/api/auth";
 
@@ -66,19 +67,16 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen relative">
+      <AnimatedBackground />
       <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
-      <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-red-50">
-        {/* Background Decorations */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-red-100 rounded-full opacity-30 blur-3xl animate-pulse-slow"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-200 rounded-full opacity-20 blur-3xl animate-pulse-slow delay-200"></div>
-        </div>
+      <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden">
+
 
         {/* Main Container */}
         <div className="relative z-10 w-full max-w-md">
-          
+
 
           {/* Login Card */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-2xl">

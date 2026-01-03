@@ -4,7 +4,6 @@ function Footer() {
     const footerLinks = [
         { label: "Features", href: "/#features" },
         { label: "About", href: "/#about" },
-        { label: "How It Works", href: "/#how-it-works" },
         { label: "Privacy", href: "/#privacy" },
         { label: "Terms", href: "/#terms" },
     ];
