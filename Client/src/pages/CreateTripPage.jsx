@@ -38,10 +38,19 @@ function CreateTripPage() {
     const urlParams = new URLSearchParams(location.search);
     const packageId = urlParams.get("packageId");
 
+    console.log("URL packageId:", packageId);
+    console.log("Available packages:", availablePackages);
+
     if (packageId && availablePackages.length > 0) {
       const pkg = availablePackages.find((p) => p._id === packageId);
+      console.log("Found package:", pkg);
       if (pkg) {
         selectPackage(pkg);
+      } else {
+        console.log(
+          "Package not found, available packages:",
+          availablePackages.map((p) => ({ id: p._id, dest: p.destination }))
+        );
       }
     }
   }, [availablePackages, location.search]);
@@ -50,12 +59,21 @@ function CreateTripPage() {
     try {
       const response = await fetch(`${API_URL}/trips`);
       const data = await response.json();
-      if (data.success) {
+
+      console.log("Fetched data:", data);
+
+      if (data.success && data.trips) {
         setAvailablePackages(data.trips);
         setFilteredPackages(data.trips);
+      } else {
+        console.error("Invalid response format:", data);
+        setAvailablePackages([]);
+        setFilteredPackages([]);
       }
     } catch (error) {
       console.error("Error fetching packages:", error);
+      setAvailablePackages([]);
+      setFilteredPackages([]);
     }
   };
 
@@ -64,15 +82,19 @@ function CreateTripPage() {
     setSearchQuery(query);
     setShowResults(true);
 
+    console.log("Search query:", query);
+    console.log("Available packages for filtering:", availablePackages.length);
+
     if (query.trim() === "") {
       setFilteredPackages(availablePackages);
     } else {
       const filtered = availablePackages.filter(
         (pkg) =>
-          pkg.destination.toLowerCase().includes(query.toLowerCase()) ||
-          pkg.description.toLowerCase().includes(query.toLowerCase()) ||
+          pkg.destination?.toLowerCase().includes(query.toLowerCase()) ||
+          pkg.description?.toLowerCase().includes(query.toLowerCase()) ||
           pkg.category?.toLowerCase().includes(query.toLowerCase())
       );
+      console.log("Filtered packages:", filtered);
       setFilteredPackages(filtered);
     }
   };

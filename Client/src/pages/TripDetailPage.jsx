@@ -1,5 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  MapPin,
+  Calendar,
+  Clock,
+  DollarSign,
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Plus,
+  Save,
+  X,
+  Eye,
+  Users,
+  User as UserIcon,
+  LogOut,
+  LayoutGrid,
+} from "lucide-react";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -11,6 +28,7 @@ function TripDetailPage() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState("list");
   const [showAddSection, setShowAddSection] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [newSection, setNewSection] = useState({
     name: "",
@@ -277,22 +295,33 @@ function TripDetailPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-600 text-lg">Loading trip details...</div>
+      <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
+        <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-gray-100">
+          <div className="text-gray-700 text-lg font-semibold">
+            Loading trip details...
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!trip) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-gray-600 mb-4 text-lg">Trip not found</div>
+      <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
+        <div className="text-center bg-white/80 backdrop-blur-md rounded-2xl p-12 shadow-xl border border-gray-100">
+          <div className="text-gray-700 mb-6 text-xl font-semibold">
+            Trip not found
+          </div>
           <button
             onClick={() => navigate("/my-trips")}
-            className="text-red-600 hover:text-red-700 font-semibold"
+            className="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-semibold shadow-lg"
           >
             ← Back to My Trips
           </button>
@@ -302,118 +331,238 @@ function TripDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Navigation */}
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
+              <div
+                onClick={() => navigate("/dashboard")}
+                className="flex items-center space-x-3 cursor-pointer group"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 group-hover:scale-105 transition-transform">
+                  <span className="text-white font-bold text-lg">G</span>
+                </div>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+                  GlobeTrotter
+                </h1>
+              </div>
+              <div className="hidden md:block w-px h-8 bg-gray-200"></div>
               <button
                 onClick={() => navigate("/my-trips")}
-                className="text-gray-600 hover:text-black font-semibold transition"
+                className="flex items-center gap-2 text-gray-600 hover:text-red-600 font-semibold transition-colors"
               >
-                ← Back
+                <ArrowLeft size={18} />
+                <span>My Trips</span>
               </button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {trip.tripName}
-                </h1>
-                <p className="text-sm text-gray-600 mt-1">
-                  {new Date(trip.startDate).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}{" "}
-                  -{" "}
-                  {new Date(trip.endDate).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
-              </div>
             </div>
-            <div className="flex gap-3">
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/cities")}
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
+              >
+                Cities
+              </button>
               <button
                 onClick={() => navigate("/community-tab")}
-                className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
               >
                 Community
               </button>
-              <button
-                onClick={() => navigate("/dashboard/profile")}
-                className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
-              >
-                Profile
-              </button>
-              <button
-                onClick={() => navigate(`/trip/${tripId}/itinerary`)}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold shadow-md"
-              >
-                View Itinerary
-              </button>
-              <button
-                onClick={() =>
-                  setViewMode(viewMode === "list" ? "calendar" : "list")
-                }
-                className="px-6 py-3 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition font-semibold shadow-sm"
-              >
-                {viewMode === "list" ? "Calendar View" : "List View"}
-              </button>
+
+              <div className="relative ml-2">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition overflow-hidden shadow-md ring-2 ring-white"
+                >
+                  {user.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    user.name?.charAt(0).toUpperCase() || "U"
+                  )}
+                </button>
+
+                {isDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    ></div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden animate-fade-in-up">
+                      <div className="p-4 bg-gray-50 border-b border-gray-100">
+                        <p className="text-sm font-bold text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                          {user.email}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => navigate("/dashboard/profile")}
+                        className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-red-50 transition flex items-center gap-2"
+                      >
+                        <UserIcon size={16} className="text-red-600" />
+                        <span>Profile Settings</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition flex items-center gap-2 border-t border-gray-50"
+                      >
+                        <LogOut size={16} />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Trip Overview */}
-        <div className="bg-white rounded-2xl shadow-md border-2 border-gray-200 p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Trip Hero Section */}
+        <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-[2.5rem] p-8 md:p-12 mb-12 text-left shadow-2xl shadow-red-200/50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-8">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+                  <MapPin size={24} className="text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-black text-white mb-2">
+                    {trip.tripName}
+                  </h1>
+                  <div className="flex items-center gap-4 text-red-100">
+                    <div className="flex items-center gap-2">
+                      <Calendar size={16} />
+                      <span className="font-semibold">
+                        {new Date(trip.startDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <span className="text-white/50">→</span>
+                    <div className="flex items-center gap-2">
+                      <Calendar size={16} />
+                      <span className="font-semibold">
+                        {new Date(trip.endDate).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-red-50 leading-relaxed font-medium opacity-90 max-w-2xl">
+                {trip.description}
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate(`/trip/${tripId}/itinerary`)}
+                className="px-6 py-3 bg-white/10 backdrop-blur-md text-white rounded-xl hover:bg-white/20 transition-all font-semibold border border-white/20 flex items-center gap-2 shadow-lg"
+              >
+                <Eye size={18} />
+                <span>View Itinerary</span>
+              </button>
+              <button
+                onClick={() =>
+                  setViewMode(viewMode === "list" ? "calendar" : "list")
+                }
+                className="px-6 py-3 bg-white text-red-700 rounded-xl hover:bg-red-50 transition-all font-semibold shadow-lg flex items-center gap-2"
+              >
+                <LayoutGrid size={18} />
+                <span>
+                  {viewMode === "list" ? "Calendar View" : "List View"}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Trip Overview Stats */}
+        <div className="bg-white/80 backdrop-blur-md rounded-[2rem] shadow-xl border border-gray-100 p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+              <LayoutGrid size={18} className="text-white" />
+            </div>
             Trip Overview
           </h2>
-          <p className="text-gray-700 mb-6 text-base leading-relaxed">
-            {trip.description}
-          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
-                Duration
-              </p>
-              <p className="text-4xl font-bold text-red-600">
-                {Math.ceil(
-                  (new Date(trip.endDate) - new Date(trip.startDate)) /
-                    (1000 * 60 * 60 * 24)
-                )}
-              </p>
-              <p className="text-gray-600 text-sm mt-1">days</p>
+            <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-6 border border-red-200 shadow-sm hover:shadow-lg transition-all group">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Clock size={24} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-gray-700 text-sm font-semibold uppercase tracking-wide">
+                    Duration
+                  </p>
+                  <p className="text-3xl font-black text-red-600">
+                    {Math.ceil(
+                      (new Date(trip.endDate) - new Date(trip.startDate)) /
+                        (1000 * 60 * 60 * 24)
+                    )}
+                  </p>
+                  <p className="text-gray-600 text-sm font-medium">days</p>
+                </div>
+              </div>
             </div>
-            <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
-                Destinations
-              </p>
-              <p className="text-4xl font-bold text-red-600">
-                {trip.destinations?.length || 0}
-              </p>
-              <p className="text-gray-600 text-sm mt-1">sections</p>
+            <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-6 border border-red-200 shadow-sm hover:shadow-lg transition-all group">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MapPin size={24} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-gray-700 text-sm font-semibold uppercase tracking-wide">
+                    Destinations
+                  </p>
+                  <p className="text-3xl font-black text-red-600">
+                    {trip.destinations?.length || 0}
+                  </p>
+                  <p className="text-gray-600 text-sm font-medium">sections</p>
+                </div>
+              </div>
             </div>
-            <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
-                Activities
-              </p>
-              <p className="text-4xl font-bold text-red-600">
-                {trip.destinations?.reduce(
-                  (sum, dest) => sum + (dest.activities?.length || 0),
-                  0
-                ) || 0}
-              </p>
-              <p className="text-gray-600 text-sm mt-1">planned</p>
+            <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-6 border border-red-200 shadow-sm hover:shadow-lg transition-all group">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Users size={24} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-gray-700 text-sm font-semibold uppercase tracking-wide">
+                    Activities
+                  </p>
+                  <p className="text-3xl font-black text-red-600">
+                    {trip.destinations?.reduce(
+                      (sum, dest) => sum + (dest.activities?.length || 0),
+                      0
+                    ) || 0}
+                  </p>
+                  <p className="text-gray-600 text-sm font-medium">planned</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Sections/Destinations */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {trip.destinations &&
             trip.destinations.map((destination, index) => {
               const isEditing = editingSection === index;
@@ -422,218 +571,239 @@ function TripDetailPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl shadow-md border-2 border-gray-200 p-8 hover:shadow-lg transition"
+                  className="bg-white/80 backdrop-blur-md rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all"
                 >
                   {/* Section Header */}
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm font-bold text-white bg-red-600 rounded-full w-8 h-8 flex items-center justify-center">
-                          {index + 1}
-                        </span>
+                  <div className="bg-gradient-to-r from-red-600 to-red-700 p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-3">
+                          <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+                            <span className="text-white font-bold text-lg">
+                              {index + 1}
+                            </span>
+                          </div>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={
+                                edits.name !== undefined
+                                  ? edits.name
+                                  : destination.name
+                              }
+                              onChange={(e) =>
+                                handleSectionFieldChange(
+                                  index,
+                                  "name",
+                                  e.target.value
+                                )
+                              }
+                              className="text-2xl font-bold text-white bg-white/10 backdrop-blur-md flex-1 px-4 py-2 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/70"
+                            />
+                          ) : (
+                            <h3 className="text-2xl font-bold text-white">
+                              {destination.name}
+                            </h3>
+                          )}
+                        </div>
                         {isEditing ? (
-                          <input
-                            type="text"
+                          <textarea
                             value={
-                              edits.name !== undefined
-                                ? edits.name
-                                : destination.name
+                              edits.notes !== undefined
+                                ? edits.notes
+                                : destination.notes || ""
                             }
                             onChange={(e) =>
                               handleSectionFieldChange(
                                 index,
-                                "name",
+                                "notes",
                                 e.target.value
                               )
                             }
-                            className="text-2xl font-bold text-black flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="text-red-100 bg-white/10 backdrop-blur-md w-full px-4 py-2 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 resize-none placeholder-white/70"
+                            rows="2"
+                            placeholder="Add description..."
                           />
                         ) : (
-                          <h3 className="text-2xl font-bold text-black">
-                            {destination.name}
-                          </h3>
+                          <p className="text-red-100 font-medium">
+                            {destination.notes || "No description"}
+                          </p>
                         )}
                       </div>
-                      {isEditing ? (
-                        <textarea
-                          value={
-                            edits.notes !== undefined
-                              ? edits.notes
-                              : destination.notes || ""
-                          }
-                          onChange={(e) =>
-                            handleSectionFieldChange(
-                              index,
-                              "notes",
-                              e.target.value
-                            )
-                          }
-                          className="text-sm text-gray-600 mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
-                          rows="2"
-                        />
-                      ) : (
-                        <p className="text-sm text-gray-600 mt-2">
-                          {destination.notes || "No description"}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      {isEditing ? (
-                        <>
-                          <button
-                            onClick={() => handleUpdateSection(index)}
-                            className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition font-semibold text-sm"
-                          >
-                            Save
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingSection(null);
-                              setSectionEdits({});
-                            }}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-semibold text-sm"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => setEditingSection(index)}
-                            className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition font-semibold text-sm"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteSection(index)}
-                            className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-semibold text-sm"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
+                      <div className="flex gap-2 ml-4">
+                        {isEditing ? (
+                          <>
+                            <button
+                              onClick={() => handleUpdateSection(index)}
+                              className="px-4 py-2 bg-green-500/20 backdrop-blur-md text-green-100 rounded-xl hover:bg-green-500/30 transition-all font-semibold text-sm border border-green-400/30 flex items-center gap-2"
+                            >
+                              <Save size={16} />
+                              Save
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingSection(null);
+                                setSectionEdits({});
+                              }}
+                              className="px-4 py-2 bg-white/10 backdrop-blur-md text-white rounded-xl hover:bg-white/20 transition-all font-semibold text-sm border border-white/20 flex items-center gap-2"
+                            >
+                              <X size={16} />
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => setEditingSection(index)}
+                              className="px-4 py-2 bg-white/10 backdrop-blur-md text-white rounded-xl hover:bg-white/20 transition-all font-semibold text-sm border border-white/20 flex items-center gap-2"
+                            >
+                              <Edit size={16} />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSection(index)}
+                              className="px-4 py-2 bg-red-500/20 backdrop-blur-md text-red-100 rounded-xl hover:bg-red-500/30 transition-all font-semibold text-sm border border-red-400/30 flex items-center gap-2"
+                            >
+                              <Trash2 size={16} />
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Section Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-white border-b-2 border-gray-200">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                        Start Date
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="date"
-                          value={
-                            edits.startDate !== undefined
-                              ? edits.startDate
-                              : destination.startDate
-                              ? new Date(destination.startDate)
-                                  .toISOString()
-                                  .split("T")[0]
-                              : ""
-                          }
-                          onChange={(e) =>
-                            handleSectionFieldChange(
-                              index,
-                              "startDate",
-                              e.target.value
-                            )
-                          }
-                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                      ) : (
-                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
-                          {destination.startDate ? (
-                            new Date(destination.startDate).toLocaleDateString()
-                          ) : (
-                            <span className="text-gray-500 italic">
-                              Click Edit to set date
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                        End Date
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="date"
-                          value={
-                            edits.endDate !== undefined
-                              ? edits.endDate
-                              : destination.endDate
-                              ? new Date(destination.endDate)
-                                  .toISOString()
-                                  .split("T")[0]
-                              : ""
-                          }
-                          onChange={(e) =>
-                            handleSectionFieldChange(
-                              index,
-                              "endDate",
-                              e.target.value
-                            )
-                          }
-                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                      ) : (
-                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
-                          {destination.endDate ? (
-                            new Date(destination.endDate).toLocaleDateString()
-                          ) : (
-                            <span className="text-gray-500 italic">
-                              Click Edit to set date
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                        Budget
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={
-                            edits.budget !== undefined
-                              ? edits.budget
-                              : destination.budget || ""
-                          }
-                          onChange={(e) =>
-                            handleSectionFieldChange(
-                              index,
-                              "budget",
-                              e.target.value
-                            )
-                          }
-                          placeholder="$0"
-                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                        />
-                      ) : (
-                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
-                          {destination.budget &&
-                          destination.budget !== "$0" &&
-                          destination.budget !== "0" ? (
-                            destination.budget
-                          ) : (
-                            <span className="text-gray-500 italic">
-                              No budget set
-                            </span>
-                          )}
-                        </div>
-                      )}
+                  <div className="p-6 bg-gray-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                          <Calendar size={16} className="text-red-600" />
+                          Start Date
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="date"
+                            value={
+                              edits.startDate !== undefined
+                                ? edits.startDate
+                                : destination.startDate
+                                ? new Date(destination.startDate)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleSectionFieldChange(
+                                index,
+                                "startDate",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-4 py-3 border border-red-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
+                          />
+                        ) : (
+                          <div className="px-4 py-3 bg-white border border-red-200 rounded-xl text-gray-900 font-medium shadow-sm">
+                            {destination.startDate ? (
+                              new Date(
+                                destination.startDate
+                              ).toLocaleDateString()
+                            ) : (
+                              <span className="text-gray-500 italic">
+                                Click Edit to set date
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                          <Calendar size={16} className="text-red-600" />
+                          End Date
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="date"
+                            value={
+                              edits.endDate !== undefined
+                                ? edits.endDate
+                                : destination.endDate
+                                ? new Date(destination.endDate)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : ""
+                            }
+                            onChange={(e) =>
+                              handleSectionFieldChange(
+                                index,
+                                "endDate",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-4 py-3 border border-red-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
+                          />
+                        ) : (
+                          <div className="px-4 py-3 bg-white border border-red-200 rounded-xl text-gray-900 font-medium shadow-sm">
+                            {destination.endDate ? (
+                              new Date(destination.endDate).toLocaleDateString()
+                            ) : (
+                              <span className="text-gray-500 italic">
+                                Click Edit to set date
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                          <DollarSign size={16} className="text-red-600" />
+                          Budget
+                        </label>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={
+                              edits.budget !== undefined
+                                ? edits.budget
+                                : destination.budget || ""
+                            }
+                            onChange={(e) =>
+                              handleSectionFieldChange(
+                                index,
+                                "budget",
+                                e.target.value
+                              )
+                            }
+                            placeholder="$0"
+                            className="w-full px-4 py-3 border border-red-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm"
+                          />
+                        ) : (
+                          <div className="px-4 py-3 bg-white border border-red-200 rounded-xl text-gray-900 font-medium shadow-sm">
+                            {destination.budget &&
+                            destination.budget !== "$0" &&
+                            destination.budget !== "0" ? (
+                              destination.budget
+                            ) : (
+                              <span className="text-gray-500 italic">
+                                No budget set
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Activities Section */}
                   <div className="p-6 bg-white">
-                    <h4 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide">
-                      Activities ({destination.activities?.length || 0})
-                    </h4>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                        <Users size={18} className="text-white" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
+                        Activities ({destination.activities?.length || 0})
+                      </h4>
+                    </div>
 
                     {destination.activities &&
                     destination.activities.length > 0 ? (

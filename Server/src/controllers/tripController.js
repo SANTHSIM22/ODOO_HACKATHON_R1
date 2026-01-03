@@ -7,7 +7,10 @@ const getAllTrips = async (req, res) => {
       .sort({ createdAt: -1 })
       .select("-__v");
 
-    res.json(trips);
+    res.json({
+      success: true,
+      trips,
+    });
   } catch (error) {
     console.error("Get trips error:", error);
     res.status(500).json({
