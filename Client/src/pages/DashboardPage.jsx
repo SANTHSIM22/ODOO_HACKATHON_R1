@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = "http://localhost:5000/api";
+
 function DashboardPage() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [recentTrips, setRecentTrips] = useState([]);
+    const [availableTrips, setAvailableTrips] = useState([]);
     const [recommendedDestinations, setRecommendedDestinations] = useState([]);
 
     useEffect(() => {
-
         const userData = localStorage.getItem("user");
         if (!userData) {
             navigate("/login");
@@ -18,112 +19,111 @@ function DashboardPage() {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
 
-        setRecentTrips([
-            {
-                id: 1,
-                destination: "Paris, France",
-                startDate: "2026-02-15",
-                endDate: "2026-02-22",
-                budget: 2500,
-                status: "upcoming",
-                image: "🗼"
-            },
-            {
-                id: 2,
-                destination: "Tokyo, Japan",
-                startDate: "2026-03-10",
-                endDate: "2026-03-20",
-                budget: 3200,
-                status: "upcoming",
-                image: "🗾"
-            },
-            {
-                id: 3,
-                destination: "New York, USA",
-                startDate: "2025-12-05",
-                endDate: "2025-12-12",
-                budget: 1800,
-                status: "completed",
-                image: "🗽"
-            }
-        ]);
-
-        setRecommendedDestinations([
-            {
-                id: 1,
-                name: "Bali, Indonesia",
-                description: "Tropical paradise with stunning beaches",
-                estimatedBudget: 1500,
-                image: "🏝️"
-            },
-            {
-                id: 2,
-                name: "Rome, Italy",
-                description: "Ancient history meets modern culture",
-                estimatedBudget: 2000,
-                image: "🏛️"
-            },
-            {
-                id: 3,
-                name: "Dubai, UAE",
-                description: "Luxury and innovation in the desert",
-                estimatedBudget: 2800,
-                image: "🏙️"
-            },
-            {
-                id: 4,
-                name: "Barcelona, Spain",
-                description: "Art, architecture, and Mediterranean vibes",
-                estimatedBudget: 1800,
-                image: "🏖️"
-            }
-        ]);
+        fetchTrips();
+        fetchRecommendedTrips();
     }, [navigate]);
+
+    const fetchTrips = async () => {
+        try {
+            const response = await fetch(`${API_URL}/trips`);
+            const data = await response.json();
+            if (data.success) {
+                const formattedTrips = data.trips.map(trip => ({
+                    id: trip._id,
+                    destination: trip.destination,
+                    description: trip.description,
+                    startDate: trip.startDate,
+                    endDate: trip.endDate,
+                    budget: trip.budget,
+                    status: new Date(trip.startDate) > new Date() ? "available" : "past",
+                    image: trip.image,
+                    imageUrl: trip.imageUrl,
+                    category: trip.category
+                }));
+                setAvailableTrips(formattedTrips);
+            }
+        } catch (error) {
+            console.error("Error fetching trips:", error);
+            setAvailableTrips([]);
+        }
+    };
+
+    const fetchRecommendedTrips = async () => {
+        try {
+            const response = await fetch(`${API_URL}/trips/recommended`);
+            const data = await response.json();
+            if (data.success) {
+                const formattedDestinations = data.trips.map(trip => ({
+                    id: trip._id,
+                    name: trip.destination,
+                    description: trip.description,
+                    estimatedBudget: trip.budget,
+                    image: trip.image,
+                    imageUrl: trip.imageUrl
+                }));
+                setRecommendedDestinations(formattedDestinations);
+            }
+        } catch (error) {
+            console.error("Error fetching recommended trips:", error);
+            setRecommendedDestinations([]);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.removeItem("user");
         navigate("/login");
     };
 
-    const handlePlanNewTrip = () => {
-
-        alert("Trip planning feature coming soon!");
+    const handleBookTrip = (tripId) => {
+        alert(`Booking functionality coming soon! Trip ID: ${tripId}`);
     };
 
-    const calculateTotalBudget = () => {
-        return recentTrips
-            .filter(trip => trip.status === "upcoming")
-            .reduce((sum, trip) => sum + trip.budget, 0);
+    const calculateTotalTrips = () => {
+        return availableTrips.filter(trip => trip.status === "available").length;
+    };
+
+    const calculateAverageBudget = () => {
+        const availableTripsOnly = availableTrips.filter(trip => trip.status === "available");
+        if (availableTripsOnly.length === 0) return 0;
+        const total = availableTripsOnly.reduce((sum, trip) => sum + trip.budget, 0);
+        return Math.round(total / availableTripsOnly.length);
     };
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-                <div className="text-xl text-gray-600">Loading...</div>
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="animate-pulse text-xl text-slate-600">Loading your dashboard...</div>
             </div>
         );
     }
 
-    const upcomingTrips = recentTrips.filter(trip => trip.status === "upcoming");
-    const totalBudget = calculateTotalBudget();
+    const availableTripsCount = calculateTotalTrips();
+    const averageBudget = calculateAverageBudget();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-
-            <header className="bg-white shadow-md sticky top-0 z-10">
+        <div className="min-h-screen bg-slate-50">
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-3">
-                            <span className="text-3xl">🌍</span>
-                            <h1 className="text-2xl font-bold text-indigo-600">GlobeTrotter</h1>
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                                GT
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-bold text-slate-800">GlobeTrotter</h1>
+                                <p className="text-xs text-slate-500">Travel Dashboard</p>
+                            </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <span className="text-gray-700 font-medium hidden sm:inline">
-                                {user.name}
-                            </span>
+                            <div className="hidden sm:flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-lg">
+                                <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                    {user.name?.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-sm font-medium text-slate-700">{user.name}</span>
+                            </div>
                             <button
                                 onClick={handleLogout}
-                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200 font-semibold text-sm"
+                                className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-200 font-medium text-sm shadow-sm"
                             >
                                 Logout
                             </button>
@@ -132,108 +132,145 @@ function DashboardPage() {
                 </div>
             </header>
 
-
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-           
-                <div className="mb-8">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-2">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                <div className="space-y-2">
+                    <h2 className="text-3xl font-bold text-slate-800">
                         Welcome back, {user.name}! 👋
                     </h2>
-                    <p className="text-lg text-gray-600">
-                        Ready to plan your next adventure?
+                    <p className="text-slate-600">
+                        Explore amazing travel packages and book your next adventure
                     </p>
                 </div>
 
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
- 
-                    <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-300">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-semibold opacity-90">Total Budget</h3>
-                            <span className="text-3xl">💰</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                        <div className="relative">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">Available Packages</h3>
+                                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                    <span className="text-2xl">🌍</span>
+                                </div>
+                            </div>
+                            <p className="text-4xl font-bold mb-1">{availableTripsCount}</p>
+                            <p className="text-sm opacity-90">Travel packages to explore</p>
                         </div>
-                        <p className="text-3xl font-bold">${totalBudget.toLocaleString()}</p>
-                        <p className="text-sm opacity-90 mt-1">For upcoming trips</p>
                     </div>
 
-            
-                    <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-300">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-semibold opacity-90">Upcoming Trips</h3>
-                            <span className="text-3xl">✈️</span>
+                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                        <div className="relative">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">Average Price</h3>
+                                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                    <span className="text-2xl">💰</span>
+                                </div>
+                            </div>
+                            <p className="text-4xl font-bold mb-1">${averageBudget.toLocaleString()}</p>
+                            <p className="text-sm opacity-90">Per package</p>
                         </div>
-                        <p className="text-3xl font-bold">{upcomingTrips.length}</p>
-                        <p className="text-sm opacity-90 mt-1">Adventures awaiting</p>
                     </div>
 
-
-                    <div className="bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition duration-300 cursor-pointer"
-                        onClick={handlePlanNewTrip}>
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-semibold">Plan New Trip</h3>
-                            <span className="text-3xl">➕</span>
-                        </div>
-                        <p className="text-sm opacity-90 mt-1">Start planning your next adventure</p>
-                        <div className="mt-4 bg-white bg-opacity-20 rounded-lg py-2 px-4 text-center font-semibold hover:bg-opacity-30 transition">
-                            Get Started →
+                    <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                        <div className="relative">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-semibold uppercase tracking-wide opacity-90">Special Offers</h3>
+                                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                    <span className="text-2xl">🎁</span>
+                                </div>
+                            </div>
+                            <p className="text-4xl font-bold mb-1">{recommendedDestinations.length}</p>
+                            <p className="text-sm opacity-90">Recommended destinations</p>
                         </div>
                     </div>
                 </div>
-                <div className="mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold text-gray-800">Your Trips</h3>
-                        <button className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
-                            View All →
+
+                <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h3 className="text-2xl font-bold text-slate-800">Available Travel Packages</h3>
+                            <p className="text-sm text-slate-600 mt-1">Browse and book amazing destinations</p>
+                        </div>
+                        <button className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm flex items-center space-x-1">
+                            <span>View All</span>
+                            <span>→</span>
                         </button>
                     </div>
 
-                    {recentTrips.length === 0 ? (
-                        <div className="bg-white rounded-xl shadow-md p-8 text-center">
-                            <p className="text-gray-500 text-lg mb-4">No trips yet!</p>
-                            <button
-                                onClick={handlePlanNewTrip}
-                                className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold"
-                            >
-                                Plan Your First Trip
-                            </button>
+                    {availableTrips.length === 0 ? (
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+                            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span className="text-4xl">✈️</span>
+                            </div>
+                            <h4 className="text-xl font-semibold text-slate-800 mb-2">No packages available yet!</h4>
+                            <p className="text-slate-600 mb-6">Check back soon for exciting travel packages</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {recentTrips.map((trip) => (
+                            {availableTrips.map((trip) => (
                                 <div
                                     key={trip.id}
-                                    className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer"
+                                    className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-indigo-300 transition-all duration-300 group cursor-pointer"
                                 >
-                                    <div className={`h-2 ${trip.status === 'upcoming' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                                    {trip.imageUrl ? (
+                                        <div className="relative h-56 overflow-hidden bg-slate-100">
+                                            <img
+                                                src={trip.imageUrl}
+                                                alt={trip.destination}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-6xl">${trip.image}</div>`;
+                                                }}
+                                            />
+                                            <div className="absolute top-3 right-3">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${trip.status === 'available'
+                                                        ? 'bg-emerald-500/90 text-white'
+                                                        : 'bg-slate-500/90 text-white'
+                                                    }`}>
+                                                    {trip.status === 'available' ? '🟢 Available' : '⚪ Past'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="relative h-56 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
+                                            <span className="text-7xl">{trip.image}</span>
+                                            <div className="absolute top-3 right-3">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${trip.status === 'available'
+                                                        ? 'bg-emerald-500/90 text-white'
+                                                        : 'bg-slate-500/90 text-white'
+                                                    }`}>
+                                                    {trip.status === 'available' ? '🟢 Available' : '⚪ Past'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="p-6">
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex-1">
-                                                <div className="flex items-center space-x-2 mb-2">
-                                                    <span className="text-3xl">{trip.image}</span>
-                                                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${trip.status === 'upcoming'
-                                                            ? 'bg-green-100 text-green-700'
-                                                            : 'bg-gray-100 text-gray-700'
-                                                        }`}>
-                                                        {trip.status}
-                                                    </span>
+                                        <h4 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-indigo-600 transition">
+                                            {trip.destination}
+                                        </h4>
+                                        {trip.description && (
+                                            <p className="text-sm text-slate-600 mb-4 line-clamp-2">{trip.description}</p>
+                                        )}
+                                        <div className="space-y-2 mb-4">
+                                            <div className="flex items-center text-sm text-slate-600">
+                                                <span className="mr-2">📅</span>
+                                                <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center text-sm">
+                                                    <span className="mr-2">💵</span>
+                                                    <span className="font-bold text-slate-800 text-lg">${trip.budget.toLocaleString()}</span>
+                                                    <span className="text-xs text-slate-500 ml-1">per person</span>
                                                 </div>
-                                                <h4 className="text-xl font-bold text-gray-800 group-hover:text-indigo-600 transition">
-                                                    {trip.destination}
-                                                </h4>
                                             </div>
                                         </div>
-                                        <div className="space-y-2 text-sm text-gray-600">
-                                            <div className="flex items-center space-x-2">
-                                                <span>📅</span>
-                                                <span>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <span>💵</span>
-                                                <span className="font-semibold text-gray-800">${trip.budget.toLocaleString()}</span>
-                                            </div>
-                                        </div>
-                                        <button className="mt-4 w-full bg-indigo-50 text-indigo-600 py-2 rounded-lg hover:bg-indigo-100 transition font-semibold text-sm">
-                                            View Details
+                                        <button
+                                            onClick={() => handleBookTrip(trip.id)}
+                                            className="w-full bg-indigo-600 text-white py-2.5 rounded-xl hover:bg-indigo-700 transition font-semibold text-sm shadow-lg shadow-indigo-500/30"
+                                        >
+                                            Book Now →
                                         </button>
                                     </div>
                                 </div>
@@ -242,40 +279,60 @@ function DashboardPage() {
                     )}
                 </div>
 
-        
-                <div>
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold text-gray-800">Recommended Destinations</h3>
-                        <button className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm">
-                            Explore More →
+                <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h3 className="text-2xl font-bold text-slate-800">Recommended Destinations</h3>
+                            <p className="text-sm text-slate-600 mt-1">Handpicked by our travel experts</p>
+                        </div>
+                        <button className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm flex items-center space-x-1">
+                            <span>Explore More</span>
+                            <span>→</span>
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {recommendedDestinations.map((destination) => (
                             <div
                                 key={destination.id}
-                                className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-1"
+                                className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl hover:border-indigo-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
                             >
-                                <div className="bg-gradient-to-br from-indigo-400 to-purple-500 h-32 flex items-center justify-center text-6xl">
-                                    {destination.image}
-                                </div>
+                                {destination.imageUrl ? (
+                                    <div className="relative h-48 overflow-hidden bg-slate-100">
+                                        <img
+                                            src={destination.imageUrl}
+                                            alt={destination.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-6xl">${destination.image}</div>`;
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="h-48 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
+                                        <span className="text-6xl">{destination.image}</span>
+                                    </div>
+                                )}
                                 <div className="p-5">
-                                    <h4 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-indigo-600 transition">
+                                    <h4 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-indigo-600 transition">
                                         {destination.name}
                                     </h4>
-                                    <p className="text-sm text-gray-600 mb-3">
+                                    <p className="text-sm text-slate-600 mb-4 line-clamp-2">
                                         {destination.description}
                                     </p>
                                     <div className="flex items-center justify-between">
-                                        <div className="text-sm">
-                                            <span className="text-gray-500">From</span>
-                                            <span className="font-bold text-gray-800 ml-1">
+                                        <div>
+                                            <p className="text-xs text-slate-500">Starting from</p>
+                                            <p className="text-lg font-bold text-slate-800">
                                                 ${destination.estimatedBudget.toLocaleString()}
-                                            </span>
+                                            </p>
                                         </div>
-                                        <button className="bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 transition text-sm font-semibold">
-                                            Explore
+                                        <button
+                                            onClick={() => handleBookTrip(destination.id)}
+                                            className="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition text-sm font-semibold shadow-lg shadow-indigo-500/30"
+                                        >
+                                            Book
                                         </button>
                                     </div>
                                 </div>
@@ -285,12 +342,16 @@ function DashboardPage() {
                 </div>
             </main>
 
-
-            <footer className="bg-white mt-12 border-t border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <p className="text-center text-gray-600 text-sm">
-                        © 2026 GlobeTrotter. Your journey begins here. 🌍
-                    </p>
+            <footer className="bg-white border-t border-slate-200 mt-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="text-center">
+                        <p className="text-slate-600 text-sm">
+                            © 2026 GlobeTrotter. Your journey begins here. 🌍
+                        </p>
+                        <p className="text-slate-500 text-xs mt-2">
+                            Crafted with ❤️ for travelers worldwide
+                        </p>
+                    </div>
                 </div>
             </footer>
         </div>
