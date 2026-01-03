@@ -5,6 +5,7 @@ const API_URL = "http://localhost:5000/api/auth";
 function Register({ setUser, setShowLogin }) {
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -74,6 +75,25 @@ function Register({ setUser, setShowLogin }) {
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="John Doe"
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor="username"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Enter your username"
         />
       </div>
 

@@ -3,25 +3,34 @@ const User = require("../models/User");
 const authController = {
   register: async (req, res) => {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name, username } = req.body;
 
-      if (!email || !password || !name) {
+      if (!email || !password || !name || !username) {
         return res.status(400).json({
           success: false,
-          message: "Please provide email, password, and name",
+          message: "Please provide name, username, email, and password",
         });
       }
 
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
         return res.status(400).json({
           success: false,
           message: "User already exists with this email",
         });
       }
 
+      const existingUsername = await User.findOne({ username: username.toLowerCase() });
+      if (existingUsername) {
+        return res.status(400).json({
+          success: false,
+          message: "Username is already taken",
+        });
+      }
+
       const newUser = await User.create({
         name,
+        username,
         email,
         password,
       });
@@ -47,11 +56,11 @@ const authController = {
       if (!email || !password) {
         return res.status(400).json({
           success: false,
-          message: "Please provide email and password",
+          message: "Please provide username and password",
         });
       }
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ username: email.toLowerCase() });
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -78,6 +87,55 @@ const authController = {
       res.status(500).json({
         success: false,
         message: "Server error during login",
+      });
+    }
+  },
+
+  adminLogin: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide username and password",
+        });
+      }
+
+      // Check if admin credentials are set in environment
+      if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+        console.error("Admin credentials not configured in environment variables");
+        return res.status(500).json({
+          success: false,
+          message: "Admin login is not configured",
+        });
+      }
+
+      // Validate admin credentials
+      if (
+        email.toLowerCase() === process.env.ADMIN_USERNAME.toLowerCase() &&
+        password === process.env.ADMIN_PASSWORD
+      ) {
+        res.status(200).json({
+          success: true,
+          message: "Admin login successful",
+          user: {
+            name: "Administrator",
+            username: process.env.ADMIN_USERNAME,
+            isAdmin: true,
+          },
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid admin credentials",
+        });
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error during admin login",
       });
     }
   },
