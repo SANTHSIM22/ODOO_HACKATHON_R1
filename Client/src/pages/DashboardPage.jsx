@@ -233,6 +233,12 @@ function DashboardPage() {
 
             <div className="flex items-center gap-1 md:gap-2">
               <button
+                onClick={() => navigate("/cities")}
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
+              >
+                Cities
+              </button>
+              <button
                 onClick={() => navigate("/my-trips")}
                 className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
               >

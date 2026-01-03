@@ -1,5 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Search,
+  Filter,
+  MapPin,
+  LogOut,
+  User as UserIcon,
+  TrendingUp,
+  Award,
+  Globe,
+  Zap,
+} from "lucide-react";
+import Footer from "../components/layout/Footer";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -14,6 +26,7 @@ const CitySearchPage = () => {
   const [selectedActivity, setSelectedActivity] = useState("All");
   const [searchType, setSearchType] = useState("All");
   const [sortBy, setSortBy] = useState("Recommended");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -141,90 +154,165 @@ const CitySearchPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b-2 border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Navigation - Dashboard Style */}
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <button
+            <div
               onClick={() => navigate("/dashboard")}
-              className="text-2xl font-bold text-gray-900 hover:text-red-600 transition"
+              className="flex items-center space-x-3 cursor-pointer group"
             >
-              GlobeTrotter
-            </button>
-            <div className="flex gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 group-hover:scale-105 transition-transform">
+                <span className="text-white font-bold text-lg">G</span>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+                GlobeTrotter
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-1 md:gap-2">
+              <button
+                onClick={() => navigate("/cities")}
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
+              >
+                Cities
+              </button>
               <button
                 onClick={() => navigate("/my-trips")}
-                className="px-5 py-2 text-gray-700 hover:text-red-600 font-semibold transition"
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
               >
                 My Trips
               </button>
               <button
                 onClick={() => navigate("/community-tab")}
-                className="px-5 py-2 text-gray-700 hover:text-red-600 font-semibold transition"
+                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
               >
                 Community
               </button>
-              <button
-                onClick={() => navigate("/dashboard/profile")}
-                className="px-5 py-2 text-gray-700 hover:text-red-600 font-semibold transition"
-              >
-                Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
-              >
-                Logout
-              </button>
+
+              <div className="relative ml-2">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition overflow-hidden shadow-md ring-2 ring-white"
+                >
+                  {user.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    user.name?.charAt(0).toUpperCase() || "U"
+                  )}
+                </button>
+
+                {isDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    ></div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden animate-fade-in-up">
+                      <div className="p-4 bg-gray-50 border-b border-gray-100">
+                        <p className="text-sm font-bold text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                          {user.email}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => navigate("/dashboard/profile")}
+                        className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-red-50 transition flex items-center gap-2"
+                      >
+                        <UserIcon size={16} className="text-red-600" />
+                        <span>Profile Settings</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 transition flex items-center gap-2 border-t border-gray-50"
+                      >
+                        <LogOut size={16} />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide mb-2">
-            Search Destinations & Activities
-          </h1>
-          <p className="text-gray-600">
-            Find destinations, explore activities, and add them to your trip
-            itinerary
-          </p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Premium Hero Section */}
+        <div className="bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-[2.5rem] p-8 md:p-12 mb-12 text-left shadow-2xl shadow-red-200/50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+
+          <div className="relative z-10 max-w-2xl">
+            <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md text-white rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest mb-6 border border-white/20">
+              Dashboard / Cities
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-4 leading-tight">
+              Search <span className="text-red-200">Destinations</span>
+            </h2>
+            <p className="text-base md:text-lg text-red-50 leading-relaxed font-semibold opacity-90">
+              Find destinations, explore activities, and add them to your trip
+              itinerary
+            </p>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 bg-white rounded-[2rem] p-4 shadow-xl shadow-gray-200/50 border border-gray-100">
+          <div className="relative group">
+            <Search
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors"
+              size={20}
+            />
+            <input
+              type="text"
+              placeholder="Search destinations, countries, activities..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-14 pr-6 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
+            />
+          </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-red-200 p-6 mb-8">
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-6 md:p-8 mb-8">
           {/* Search Type Toggle */}
-          <div className="mb-4">
-            <div className="flex gap-2">
+          <div className="mb-6">
+            <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setSearchType("All")}
-                className={`px-6 py-2 rounded-lg font-semibold transition ${
+                className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   searchType === "All"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 All
               </button>
               <button
                 onClick={() => setSearchType("Cities")}
-                className={`px-6 py-2 rounded-lg font-semibold transition ${
+                className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   searchType === "Cities"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Destinations
               </button>
               <button
                 onClick={() => setSearchType("Activities")}
-                className={`px-6 py-2 rounded-lg font-semibold transition ${
+                className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   searchType === "Activities"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Activities
@@ -296,34 +384,34 @@ const CitySearchPage = () => {
           </div>
 
           {/* Sort By */}
-          <div className="mt-4">
-            <div className="flex gap-2">
+          <div className="mt-6">
+            <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setSortBy("Recommended")}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
+                className={`px-4 py-2.5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   sortBy === "Recommended"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Recommended
               </button>
               <button
                 onClick={() => setSortBy("Budget: Low to High")}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
+                className={`px-4 py-2.5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   sortBy === "Budget: Low to High"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Budget: Low to High
               </button>
               <button
                 onClick={() => setSortBy("Budget: High to Low")}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
+                className={`px-4 py-2.5 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all ${
                   sortBy === "Budget: High to Low"
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Budget: High to Low
@@ -342,8 +430,8 @@ const CitySearchPage = () => {
 
         {/* Results Count */}
         {!loading && (
-          <div className="mb-4">
-            <p className="text-gray-600 font-semibold">
+          <div className="mb-6">
+            <p className="text-gray-900 font-black text-sm uppercase tracking-wider">
               {processedTrips.length} result
               {processedTrips.length !== 1 ? "s" : ""} found
               {searchType !== "All" && (
@@ -359,10 +447,10 @@ const CitySearchPage = () => {
             {processedTrips.map((trip) => (
               <div
                 key={trip._id}
-                className="bg-white rounded-2xl shadow-md border-2 border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300"
+                className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-red-200/50 hover:border-red-300 transition-all duration-500 group cursor-pointer"
               >
                 {/* Trip Image */}
-                <div className="h-48 overflow-hidden bg-gray-100">
+                <div className="h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                   <img
                     src={
                       trip.imageUrl ||
@@ -370,7 +458,7 @@ const CitySearchPage = () => {
                       "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800"
                     }
                     alt={trip.destination}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     onError={(e) => {
                       e.target.src =
                         "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800";
@@ -446,7 +534,7 @@ const CitySearchPage = () => {
                   {/* Add to Trip Button */}
                   <button
                     onClick={() => handleAddToTrip(trip)}
-                    className="w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold uppercase tracking-wide"
+                    className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl hover:from-red-700 hover:to-red-900 transition-all font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-200/50 group-hover:shadow-2xl group-hover:shadow-red-300/50"
                   >
                     Add to My Trips
                   </button>
@@ -458,14 +546,18 @@ const CitySearchPage = () => {
 
         {/* No Results */}
         {!loading && processedTrips.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-md border-2 border-dashed border-gray-300 p-16 text-center">
-            <p className="text-gray-500 font-semibold mb-2">No results found</p>
-            <p className="text-sm text-gray-400">
+          <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-dashed border-gray-300 p-16 text-center">
+            <p className="text-gray-900 font-black text-xl mb-2 uppercase tracking-wider">
+              No results found
+            </p>
+            <p className="text-gray-500 font-medium">
               Try adjusting your search or filters
             </p>
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };
