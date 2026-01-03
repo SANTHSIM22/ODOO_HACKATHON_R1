@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 
 function LandingPage() {
   const [isVisible, setIsVisible] = useState({});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const sectionRefs = useRef({});
 
   useEffect(() => {
@@ -41,6 +42,19 @@ function LandingPage() {
       });
     };
   }, []);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const addToRefs = (id) => (el) => {
     if (el) sectionRefs.current[id] = el;
