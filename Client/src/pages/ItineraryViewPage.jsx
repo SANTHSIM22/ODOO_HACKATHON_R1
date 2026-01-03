@@ -183,6 +183,21 @@ function ItineraryViewPage() {
                 <p className="text-sm text-gray-600 mt-1">{trip.tripName}</p>
               </div>
             </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/dashboard/profile")}
+                className="px-6 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+              >
+                Profile
+              </button>
+              <button
+                onClick={handleBackToDashboard}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold uppercase tracking-wide"
+              >
+                Back to Dashboard
+              </button>
+            </div>
           </div>
         </div>
       </header>

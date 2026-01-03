@@ -185,12 +185,20 @@ function MyTripsPage() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => navigate("/create-trip")}
-                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition font-semibold shadow-md"
-              >
-                + New Trip
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => navigate("/dashboard/profile")}
+                  className="px-6 py-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={() => navigate("/create-trip")}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition font-semibold shadow-md"
+                >
+                  + New Trip
+                </button>
+              </div>
             </div>
 
             {/* Search and Filters */}

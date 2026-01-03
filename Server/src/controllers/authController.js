@@ -162,6 +162,57 @@ const authController = {
       });
     }
   },
+
+  updateProfile: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        city,
+        country,
+        additionalInfo,
+        profileImage,
+      } = req.body;
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      // Update fields if provided
+      if (firstName !== undefined) user.firstName = firstName;
+      if (lastName !== undefined) user.lastName = lastName;
+      if (firstName || lastName) {
+        user.name = `${user.firstName} ${user.lastName}`;
+      }
+      if (email !== undefined) user.email = email;
+      if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
+      if (city !== undefined) user.city = city;
+      if (country !== undefined) user.country = country;
+      if (additionalInfo !== undefined) user.additionalInfo = additionalInfo;
+      if (profileImage !== undefined) user.profileImage = profileImage;
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        user: user.toJSON(),
+      });
+    } catch (error) {
+      console.error("Update profile error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error during profile update",
+      });
+    }
+  },
 };
 
 module.exports = authController;
