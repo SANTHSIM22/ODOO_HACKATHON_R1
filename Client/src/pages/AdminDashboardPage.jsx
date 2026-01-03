@@ -384,23 +384,7 @@ function AdminDashboardPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Icon Emoji
-                  </label>
-                  <select
-                    name="image"
-                    value={formData.image}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    {emojiOptions.map((emoji) => (
-                      <option key={emoji} value={emoji}>
-                        {emoji} {emoji}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
