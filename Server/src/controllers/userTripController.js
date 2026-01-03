@@ -23,6 +23,33 @@ const getUserTrips = async (req, res) => {
     }
 };
 
+// Get single trip by ID
+const getTripById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const trip = await UserTrip.findById(id).select('-__v');
+
+        if (!trip) {
+            return res.status(404).json({
+                success: false,
+                message: 'Trip not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            trip
+        });
+    } catch (error) {
+        console.error('Get trip by ID error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching trip'
+        });
+    }
+};
+
 // Create a new user trip
 const createUserTrip = async (req, res) => {
     try {
@@ -174,6 +201,7 @@ const addDestination = async (req, res) => {
 
 module.exports = {
     getUserTrips,
+    getTripById,
     createUserTrip,
     updateUserTrip,
     deleteUserTrip,
