@@ -158,7 +158,9 @@ const CommunityPage = () => {
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-10">
                     <div className="flex flex-col lg:flex-row gap-4">
                         <div className="flex-1 relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2">
+                                <img src="/assets/images/search.png" alt="Search" className="w-6 h-6 object-contain" />
+                            </span>
                             <input
                                 type="text"
                                 placeholder="Search by destination, place or description..."
@@ -366,8 +368,9 @@ const CommunityPage = () => {
                                         <h3 className="text-xl font-bold text-gray-900 mb-2">
                                             {post.placeName}
                                         </h3>
-                                        <p className="text-sm text-red-600 font-semibold mb-3">
-                                            📍 {post.location}
+                                        <p className="text-sm text-red-600 font-semibold mb-3 flex items-center gap-1">
+                                            <img src="/assets/images/location.png" alt="Location" className="w-4 h-4 object-contain" />
+                                            {post.location}
                                         </p>
                                         <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                                             {post.description}
