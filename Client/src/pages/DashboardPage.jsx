@@ -206,16 +206,16 @@ function DashboardPage() {
                             <h1 className="text-xl font-bold text-gray-900 tracking-tight">GlobeTrotter</h1>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 md:gap-2">
                             <button
                                 onClick={() => navigate("/my-trips")}
-                                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
+                                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
                             >
                                 My Trips
                             </button>
                             <button
                                 onClick={() => navigate("/community-tab")}
-                                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
+                                className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 hover:text-red-700 rounded-lg hover:bg-red-50 transition-all font-bold uppercase tracking-wider"
                             >
                                 Community
                             </button>
@@ -270,39 +270,39 @@ function DashboardPage() {
                     <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
                     <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
 
-                    <div className="relative z-10 max-w-xl">
-                        <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md text-white rounded-full text-xs font-black uppercase tracking-widest mb-6 border border-white/20">
+                    <div className="relative z-10 max-w-xl text-center md:text-left w-full">
+                        <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md text-white rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest mb-6 border border-white/20">
                             Welcome back, {user.name}
                         </span>
-                        <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
                             Ready for your <span className="text-red-200">next destination?</span>
                         </h2>
-                        <p className="text-lg text-red-50 leading-relaxed font-semibold opacity-90">
+                        <p className="text-base md:text-lg text-red-50 leading-relaxed font-semibold opacity-90">
                             Discover handpicked luxury packages and curated experiences designed for the modern explorer.
                         </p>
                     </div>
 
-                    <div className="relative z-10 hidden lg:block pr-8">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                                <TrendingUp size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
-                                <p className="text-3xl font-black">{availableTrips.length}</p>
-                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Trips Available</p>
+                    <div className="relative z-10 hidden md:block md:pr-4 lg:pr-8">
+                        <div className="grid grid-cols-2 gap-3 lg:gap-4">
+                            <div className="bg-white/10 backdrop-blur-md p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/10 text-white min-w-[140px] lg:min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
+                                <TrendingUp size={24} className="text-red-300 mb-2 lg:mb-3 group-hover/card:scale-110 transition-transform" />
+                                <p className="text-2xl lg:text-3xl font-black">{availableTrips.length}</p>
+                                <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest opacity-60">Trips Available</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                                <Award size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
-                                <p className="text-3xl font-black">12k+</p>
-                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Happy Travelers</p>
+                            <div className="bg-white/10 backdrop-blur-md p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/10 text-white min-w-[140px] lg:min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
+                                <Award size={24} className="text-red-300 mb-2 lg:mb-3 group-hover/card:scale-110 transition-transform" />
+                                <p className="text-2xl lg:text-3xl font-black">12k+</p>
+                                <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest opacity-60">Happy Travelers</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                                <Globe size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
-                                <p className="text-3xl font-black">{allContinents.length}</p>
-                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Continents</p>
+                            <div className="bg-white/10 backdrop-blur-md p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/10 text-white min-w-[140px] lg:min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
+                                <Globe size={24} className="text-red-300 mb-2 lg:mb-3 group-hover/card:scale-110 transition-transform" />
+                                <p className="text-2xl lg:text-3xl font-black">{allContinents.length}</p>
+                                <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest opacity-60">Continents</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                                <Zap size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
-                                <p className="text-3xl font-black">24/7</p>
-                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Support</p>
+                            <div className="bg-white/10 backdrop-blur-md p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] border border-white/10 text-white min-w-[140px] lg:min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
+                                <Zap size={24} className="text-red-300 mb-2 lg:mb-3 group-hover/card:scale-110 transition-transform" />
+                                <p className="text-2xl lg:text-3xl font-black">24/7</p>
+                                <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest opacity-60">Support</p>
                             </div>
                         </div>
                     </div>
