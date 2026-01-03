@@ -6,6 +6,7 @@ import Footer from "../components/layout/Footer";
 function LandingPage() {
   const [isVisible, setIsVisible] = useState({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const sectionRefs = useRef({});
 
   useEffect(() => {
@@ -59,6 +60,14 @@ function LandingPage() {
     };
   }, [isMobileMenuOpen]);
 
+  // Auto-play testimonials
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % 4);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
 
@@ -92,9 +101,9 @@ function LandingPage() {
                   </span>
                 </div>
 
-                <h2 className="text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-[1.1] opacity-0-initial animate-fade-in-up delay-100">
+                <h2 className="text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight opacity-0-initial animate-fade-in-up delay-100 py-2">
                   Plan Your
-                  <span className="block gradient-text">Perfect Journey</span>
+                  <span className="block gradient-text py-2">Perfect Journey</span>
                 </h2>
 
                 <p className="text-xl text-gray-600 leading-relaxed max-w-xl opacity-0-initial animate-fade-in-up delay-200">
@@ -357,7 +366,7 @@ function LandingPage() {
                     }`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <p className="text-4xl lg:text-5xl font-bold gradient-text">
+                  <p className="text-4xl lg:text-5xl font-bold gradient-text py-2">
                     {stat.value}
                   </p>
                   <p className="text-sm text-gray-500 mt-2">{stat.label}</p>
@@ -527,9 +536,9 @@ function LandingPage() {
               <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
                 Platform Features
               </p>
-              <h3 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <h3 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Everything You Need to Plan
-                <span className="block gradient-text">the Perfect Trip</span>
+                <span className="block gradient-text py-2">the Perfect Trip</span>
               </h3>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 From itinerary building to budget management, our comprehensive
@@ -557,6 +566,7 @@ function LandingPage() {
                   ),
                   title: "Itinerary Builder",
                   desc: "Construct comprehensive day-wise trip plans with an interactive interface.",
+                  backDesc: "Drag and drop activities, sync with maps, and share with your travel buddies in real-time."
                 },
                 {
                   icon: (
@@ -576,6 +586,7 @@ function LandingPage() {
                   ),
                   title: "Budget Management",
                   desc: "Track expenses with detailed breakdowns by category.",
+                  backDesc: "Set daily limits, convert currencies automatically, and get smart alerts when you're near your limit."
                 },
                 {
                   icon: (
@@ -595,6 +606,7 @@ function LandingPage() {
                   ),
                   title: "City Discovery",
                   desc: "Search and explore destinations with detailed information.",
+                  backDesc: "Unlock hidden gems, read local secrets, and find the most instagrammable spots in every city."
                 },
                 {
                   icon: (
@@ -614,6 +626,7 @@ function LandingPage() {
                   ),
                   title: "Trip Calendar",
                   desc: "Visualize your journey with calendar-based or timeline views.",
+                  backDesc: "Never miss a flight or booking. Your entire timeline is synced and available offline."
                 },
                 {
                   icon: (
@@ -639,6 +652,7 @@ function LandingPage() {
                   ),
                   title: "Activity Search",
                   desc: "Browse curated experiences including sightseeing and tours.",
+                  backDesc: "Book skip-the-line tickets and exclusive guided tours directly through our platform."
                 },
                 {
                   icon: (
@@ -658,25 +672,174 @@ function LandingPage() {
                   ),
                   title: "Share Itineraries",
                   desc: "Create public sharable links for your travel plans.",
+                  backDesc: "Inspire others by sharing your perfectly planned journeys across social media with one click."
                 },
               ].map((feature, i) => (
                 <div
                   key={i}
-                  className={`bg-white rounded-2xl p-8 border border-gray-100 hover-lift transition-all duration-700 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"
-                    }`}
+                  className={`flip-card transition-all duration-700 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"}`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl flex items-center justify-center mb-6 border border-red-100">
-                    {feature.icon}
+                  <div className="flip-card-inner">
+                    {/* Front Side */}
+                    <div className="flip-card-front bg-white rounded-2xl p-8 border border-gray-100 shadow-lg">
+                      <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6 border border-red-100 shadow-sm">
+                        {feature.icon}
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-3 px-2">
+                        {feature.title}
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed text-sm">
+                        {feature.desc}
+                      </p>
+                      <div className="mt-8 text-red-600 text-xs font-bold uppercase tracking-widest flex items-center space-x-2">
+                        <span>Hover to reveal</span>
+                        <svg className="w-4 h-4 animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Back Side */}
+                    <div className="flip-card-back bg-gradient-to-br from-red-700 to-red-900 rounded-2xl p-8 text-center flex flex-col items-center justify-center shadow-2xl">
+                      <h4 className="text-xl font-bold mb-4 text-white">
+                        {feature.title}
+                      </h4>
+                      <div className="w-10 h-1 bg-white/30 rounded-full mb-6 mx-auto"></div>
+                      <p className="text-red-50 leading-relaxed text-sm">
+                        {feature.backDesc}
+                      </p>
+                      <button className="mt-10 px-6 py-2 bg-white text-red-700 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-lg">
+                        Learn More
+                      </button>
+                    </div>
                   </div>
-                  <h4 className="text-xl font-semibold text-gray-900 mb-3">
-                    {feature.title}
-                  </h4>
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.desc}
-                  </p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section
+          id="testimonials"
+          ref={addToRefs("testimonials")}
+          className="bg-white py-24"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className={`text-center mb-16 transition-all duration-1000 ${isVisible.testimonials ? "animate-fade-in-up" : "opacity-0"
+                }`}
+            >
+              <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
+                Traveler Stories
+              </p>
+              <h3 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                What Our Community
+                <span className="block gradient-text py-2">is Saying</span>
+              </h3>
+            </div>
+
+            <div className="relative max-w-5xl mx-auto px-4 perspective-1000">
+              <div className="relative h-[450px] flex items-center justify-center">
+                {[
+                  {
+                    text: "GlobeTrotter saved me hours of planning for my Europe trip. The budget tracking is a absolute lifesaver!",
+                    author: "Sarah Johnson",
+                    location: "New York, USA",
+                    initials: "SJ"
+                  },
+                  {
+                    text: "The multi-city itinerary builder is so intuitive. It made planning my honeymoon in Asia a complete breeze.",
+                    author: "James Richardson",
+                    location: "London, UK",
+                    initials: "JR"
+                  },
+                  {
+                    text: "I love how I can visualize my entire journey and manage expenses in one place. Best travel app by far!",
+                    author: "Maria Garcia",
+                    location: "Madrid, Spain",
+                    initials: "MG"
+                  },
+                  {
+                    text: "Finally an app that understands how travelers actually think. The community tips are pure gold.",
+                    author: "David Chen",
+                    location: "Vancouver, Canada",
+                    initials: "DC"
+                  }
+                ].map((testimonial, i) => {
+                  const offset = (i - activeTestimonial + 4) % 4;
+                  let transform = "";
+                  let opacity = 0;
+                  let zIndex = 0;
+
+                  if (offset === 0) {
+                    transform = "translateX(0) scale(1) rotateY(0deg)";
+                    opacity = 1;
+                    zIndex = 30;
+                  } else if (offset === 1) {
+                    transform = "translateX(60%) scale(0.8) rotateY(-30deg)";
+                    opacity = 0.5;
+                    zIndex = 20;
+                  } else if (offset === 2) {
+                    transform = "translateX(0) scale(0.6) rotateY(0deg) translateZ(-200px)";
+                    opacity = 0;
+                    zIndex = 10;
+                  } else if (offset === 3) {
+                    transform = "translateX(-60%) scale(0.8) rotateY(30deg)";
+                    opacity = 0.5;
+                    zIndex = 20;
+                  }
+
+                  return (
+                    <div
+                      key={i}
+                      className="absolute w-full max-w-md transition-all duration-700 ease-in-out cursor-pointer"
+                      style={{
+                        transform,
+                        opacity,
+                        zIndex,
+                        perspective: "1000px"
+                      }}
+                      onClick={() => setActiveTestimonial(i)}
+                    >
+                      <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-2xl hover:shadow-red-100/50 transition-shadow">
+                        <div className="flex text-red-600 mb-4">
+                          {[...Array(5)].map((_, star) => (
+                            <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <p className="text-lg text-gray-700 italic mb-8 leading-relaxed font-medium">
+                          "{testimonial.text}"
+                        </p>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg">
+                            {testimonial.initials}
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-900 text-base">{testimonial.author}</p>
+                            <p className="text-sm text-gray-500">{testimonial.location}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Carousel Controls */}
+              <div className="flex justify-center mt-12 space-x-3">
+                {[0, 1, 2, 3].map((dot) => (
+                  <button
+                    key={dot}
+                    onClick={() => setActiveTestimonial(dot)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${activeTestimonial === dot ? "bg-red-700 w-8" : "bg-gray-300 hover:bg-red-400"
+                      }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
