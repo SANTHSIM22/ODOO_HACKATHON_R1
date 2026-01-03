@@ -61,11 +61,16 @@ const UserProfilePage = () => {
                             <h2 className="text-3xl font-bold text-brand-dark mb-2">{user.name}</h2>
                             <p className="text-gray-600 mb-1"><span className="font-semibold">Email:</span> {user.email}</p>
                             <p className="text-gray-600 mb-4"><span className="font-semibold">Phone:</span> {user.phone}</p>
-
-                            <button className="absolute top-4 right-4 text-sm bg-brand-pale text-brand-dark px-3 py-1 rounded-full hover:bg-brand-light transition font-medium">
-                                Edit
-                            </button>
                         </div>
+                    </div>
+
+                    <div className="flex flex-col gap-4 min-w-[160px] self-center">
+                        <button className="text-lg bg-brand-pale text-brand-dark px-6 py-3 rounded-xl hover:bg-brand-light transition font-bold text-center shadow-md">
+                            Edit
+                        </button>
+                        <button className="text-lg bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition font-bold text-center border border-gray-300 shadow-sm">
+                            Logout
+                        </button>
                     </div>
                 </section>
 
