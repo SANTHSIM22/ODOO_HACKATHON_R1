@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6
+    container_name: globetrotter-db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secretpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - globetrotter-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend API Server
+  server:
+    build: ./Server
+    container_name: globetrotter-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=mongodb://admin:secretpassword@mongodb:27017/globetrotter?authSource=admin
+      - JWT_SECRET=your_production_jwt_secret_key
+      - CORS_ORIGIN=http://localhost:3000
+    ports:
+      - "5000:5000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - globetrotter-network
+    volumes:
+      - ./Server/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Frontend Client
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: globetrotter-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - globetrotter-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  globetrotter-network:
+    driver: bridge

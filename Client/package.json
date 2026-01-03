@@ -6,8 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:prod": "vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "serve": "vite preview --port 4173",
+    "clean": "rm -rf dist",
+    "deploy:build": "npm run clean && npm run build:prod"
   },
   "dependencies": {
     "lucide-react": "^0.562.0",

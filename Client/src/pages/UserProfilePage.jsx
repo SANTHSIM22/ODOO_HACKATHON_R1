@@ -18,19 +18,16 @@ import {
   X,
   Plus,
   Info,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 import Footer from "../components/layout/Footer";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const UserProfilePage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [trips, setTrips] = useState([
- 
-
-  ]);
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -65,7 +62,12 @@ const UserProfilePage = () => {
       const data = await response.json();
       if (data.success && data.trips.length > 0) {
         // Merge real trips with demo trips for visual excellence
-        setTrips(prev => [...data.trips, ...prev.filter(t => !data.trips.some(rt => rt.tripName === t.tripName))]);
+        setTrips((prev) => [
+          ...data.trips,
+          ...prev.filter(
+            (t) => !data.trips.some((rt) => rt.tripName === t.tripName)
+          ),
+        ]);
       }
     } catch (error) {
       console.error("Error fetching trips:", error);
@@ -131,7 +133,7 @@ const UserProfilePage = () => {
   };
 
   const handleDelete = async (tripId) => {
-    if (tripId.startsWith('demo')) {
+    if (tripId.startsWith("demo")) {
       setTrips(trips.filter((trip) => trip._id !== tripId));
       return;
     }
@@ -191,7 +193,9 @@ const UserProfilePage = () => {
   };
 
   // Helper inside component to avoid missing CheckCircle2 if needed
-  const CheckCircle2 = ({ size }) => <span className="text-green-500 font-bold">✓</span>;
+  const CheckCircle2 = ({ size }) => (
+    <span className="text-green-500 font-bold">✓</span>
+  );
 
   const getStatusTrips = (status) => {
     return trips.filter((trip) => {
@@ -208,7 +212,9 @@ const UserProfilePage = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
-        <p className="text-gray-500 font-bold">Bringing your world together...</p>
+        <p className="text-gray-500 font-bold">
+          Bringing your world together...
+        </p>
       </div>
     );
   }
@@ -226,7 +232,9 @@ const UserProfilePage = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-lg">G</span>
               </div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">GlobeTrotter</h1>
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+                GlobeTrotter
+              </h1>
             </div>
 
             <div className="flex items-center gap-2">
@@ -249,7 +257,11 @@ const UserProfilePage = () => {
                   className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-semibold hover:bg-red-700 transition overflow-hidden shadow-md ring-2 ring-white"
                 >
                   {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                    <img
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     user.name?.charAt(0).toUpperCase() || "U"
                   )}
@@ -257,11 +269,18 @@ const UserProfilePage = () => {
 
                 {isDropdownOpen && (
                   <>
-                    <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)}></div>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    ></div>
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden animate-fade-in-up">
                       <div className="p-4 bg-gray-50 border-b border-gray-100">
-                        <p className="text-sm font-bold text-gray-900">{user.name || user.username}</p>
-                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">{user.email}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          {user.name || user.username}
+                        </p>
+                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                          {user.email}
+                        </p>
                       </div>
                       <button
                         onClick={handleLogout}
@@ -290,9 +309,20 @@ const UserProfilePage = () => {
               <div className="w-40 h-40 rounded-[2.5rem] bg-white p-2 shadow-2xl">
                 <div className="w-full h-full rounded-[2rem] overflow-hidden bg-gray-50 flex items-center justify-center text-3xl font-black text-red-600">
                   {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.username} className="w-full h-full object-cover" />
+                    <img
+                      src={user.profileImage}
+                      alt={user.username}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <span>{(user.firstName?.[0] || user.name?.[0] || user.username?.[0] || "U").toUpperCase()}</span>
+                    <span>
+                      {(
+                        user.firstName?.[0] ||
+                        user.name?.[0] ||
+                        user.username?.[0] ||
+                        "U"
+                      ).toUpperCase()}
+                    </span>
                   )}
                 </div>
               </div>
@@ -306,7 +336,9 @@ const UserProfilePage = () => {
             {/* User Meta */}
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-black text-gray-900 mb-2">
-                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : (user.name || user.username)}
+                {user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.name || user.username}
               </h1>
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                 <span className="flex items-center gap-1.5 text-gray-500 font-medium">
@@ -334,7 +366,10 @@ const UserProfilePage = () => {
                   onClick={handleEdit}
                   className="flex items-center gap-2 px-6 py-3.5 bg-gray-50 hover:bg-gray-100 text-gray-900 font-bold rounded-2xl transition-all border border-gray-100 group shadow-sm"
                 >
-                  <Edit2 size={18} className="text-red-600 group-hover:rotate-12 transition-transform" />
+                  <Edit2
+                    size={18}
+                    className="text-red-600 group-hover:rotate-12 transition-transform"
+                  />
                   Edit Profile
                 </button>
               ) : (
@@ -354,13 +389,23 @@ const UserProfilePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Profile Image URL</label>
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                      Profile Image URL
+                    </label>
                     <div className="relative">
-                      <Camera className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                      <Camera
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        size={18}
+                      />
                       <input
                         type="text"
                         value={editForm.profileImage}
-                        onChange={(e) => setEditForm({ ...editForm, profileImage: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            profileImage: e.target.value,
+                          })
+                        }
                         className="w-full bg-white border border-gray-200 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                         placeholder="https://..."
                       />
@@ -368,30 +413,48 @@ const UserProfilePage = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">First Name</label>
+                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                        First Name
+                      </label>
                       <input
                         type="text"
                         value={editForm.firstName}
-                        onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            firstName: e.target.value,
+                          })
+                        }
                         className="w-full bg-white border border-gray-200 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Last Name</label>
+                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                        Last Name
+                      </label>
                       <input
                         type="text"
                         value={editForm.lastName}
-                        onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, lastName: e.target.value })
+                        }
                         className="w-full bg-white border border-gray-200 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Phone Number</label>
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                      Phone Number
+                    </label>
                     <input
                       type="tel"
                       value={editForm.phoneNumber}
-                      onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          phoneNumber: e.target.value,
+                        })
+                      }
                       className="w-full bg-white border border-gray-200 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                     />
                   </div>
@@ -400,29 +463,44 @@ const UserProfilePage = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">City</label>
+                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                        City
+                      </label>
                       <input
                         type="text"
                         value={editForm.city}
-                        onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, city: e.target.value })
+                        }
                         className="w-full bg-white border border-gray-200 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Country</label>
+                      <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                        Country
+                      </label>
                       <input
                         type="text"
                         value={editForm.country}
-                        onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, country: e.target.value })
+                        }
                         className="w-full bg-white border border-gray-200 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium shadow-sm"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">About</label>
+                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">
+                      About
+                    </label>
                     <textarea
                       value={editForm.additionalInfo}
-                      onChange={(e) => setEditForm({ ...editForm, additionalInfo: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          additionalInfo: e.target.value,
+                        })
+                      }
                       rows={5}
                       className="w-full bg-white border border-gray-200 rounded-3xl p-6 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium resize-none shadow-sm"
                       placeholder="Tell us about yourself..."
@@ -462,15 +540,21 @@ const UserProfilePage = () => {
                 <div className="p-2.5 bg-red-50 rounded-xl text-red-600">
                   <Globe size={24} />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900">Planned Trips</h3>
+                <h3 className="text-2xl font-black text-gray-900">
+                  Planned Trips
+                </h3>
               </div>
-              {(ongoingTrips.length + plannedTrips.length > 3) ? (
+              {ongoingTrips.length + plannedTrips.length > 3 ? (
                 <button
                   onClick={() => setShowAllPlanned(!showAllPlanned)}
                   className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-100 transition-all border border-red-100"
                 >
-                  {showAllPlanned ? 'Show Less' : 'Show More'}
-                  {showAllPlanned ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  {showAllPlanned ? "Show Less" : "Show More"}
+                  {showAllPlanned ? (
+                    <ChevronUp size={14} />
+                  ) : (
+                    <ChevronDown size={14} />
+                  )}
                 </button>
               ) : (
                 <span className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase tracking-widest">
@@ -484,8 +568,12 @@ const UserProfilePage = () => {
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
                   <Plus size={32} />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">No planned trips</h4>
-                <p className="text-gray-500 mb-8 font-medium">Ready for a new adventure? Start planning your next trip!</p>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  No planned trips
+                </h4>
+                <p className="text-gray-500 mb-8 font-medium">
+                  Ready for a new adventure? Start planning your next trip!
+                </p>
                 <button
                   onClick={() => navigate("/dashboard")}
                   className="px-8 py-3.5 bg-red-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200"
@@ -495,16 +583,18 @@ const UserProfilePage = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...ongoingTrips, ...plannedTrips].slice(0, showAllPlanned ? undefined : 3).map((trip) => (
-                  <TripCard
-                    key={trip._id}
-                    trip={trip}
-                    getTripStatus={getTripStatus}
-                    calculateDuration={calculateDuration}
-                    navigate={navigate}
-                    handleDelete={handleDelete}
-                  />
-                ))}
+                {[...ongoingTrips, ...plannedTrips]
+                  .slice(0, showAllPlanned ? undefined : 3)
+                  .map((trip) => (
+                    <TripCard
+                      key={trip._id}
+                      trip={trip}
+                      getTripStatus={getTripStatus}
+                      calculateDuration={calculateDuration}
+                      navigate={navigate}
+                      handleDelete={handleDelete}
+                    />
+                  ))}
               </div>
             )}
           </section>
@@ -516,15 +606,21 @@ const UserProfilePage = () => {
                 <div className="p-2.5  bg-red-50 rounded-xl text-red-600">
                   <Calendar size={24} />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900">Previous Trips</h3>
+                <h3 className="text-2xl font-black text-gray-900">
+                  Previous Trips
+                </h3>
               </div>
-              {(previousTrips.length > 3) ? (
+              {previousTrips.length > 3 ? (
                 <button
                   onClick={() => setShowAllPrevious(!showAllPrevious)}
                   className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-100 transition-all border border-red-100"
                 >
-                  {showAllPrevious ? 'Show Less' : 'Show More'}
-                  {showAllPrevious ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  {showAllPrevious ? "Show Less" : "Show More"}
+                  {showAllPrevious ? (
+                    <ChevronUp size={14} />
+                  ) : (
+                    <ChevronDown size={14} />
+                  )}
                 </button>
               ) : (
                 <span className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold uppercase tracking-widest">
@@ -535,20 +631,24 @@ const UserProfilePage = () => {
 
             {previousTrips.length === 0 ? (
               <div className="bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100 p-20 text-center">
-                <p className="text-gray-500 font-medium font-bold italic">No previous adventures recorded yet.</p>
+                <p className="text-gray-500 font-medium font-bold italic">
+                  No previous adventures recorded yet.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {previousTrips.slice(0, showAllPrevious ? undefined : 3).map((trip) => (
-                  <TripCard
-                    key={trip._id}
-                    trip={trip}
-                    getTripStatus={getTripStatus}
-                    calculateDuration={calculateDuration}
-                    navigate={navigate}
-                    handleDelete={handleDelete}
-                  />
-                ))}
+                {previousTrips
+                  .slice(0, showAllPrevious ? undefined : 3)
+                  .map((trip) => (
+                    <TripCard
+                      key={trip._id}
+                      trip={trip}
+                      getTripStatus={getTripStatus}
+                      calculateDuration={calculateDuration}
+                      navigate={navigate}
+                      handleDelete={handleDelete}
+                    />
+                  ))}
               </div>
             )}
           </section>
@@ -560,7 +660,13 @@ const UserProfilePage = () => {
 };
 
 // Updated TripCard for modern look
-const TripCard = ({ trip, getTripStatus, calculateDuration, navigate, handleDelete }) => {
+const TripCard = ({
+  trip,
+  getTripStatus,
+  calculateDuration,
+  navigate,
+  handleDelete,
+}) => {
   const status = getTripStatus(trip.startDate, trip.endDate);
   const duration = calculateDuration(trip.startDate, trip.endDate);
 
@@ -575,7 +681,8 @@ const TripCard = ({ trip, getTripStatus, calculateDuration, navigate, handleDele
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             onError={(e) => {
               e.target.style.display = "none";
-              e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center text-red-200"><Globe size={48} /></div>';
+              e.target.parentElement.innerHTML =
+                '<div class="w-full h-full bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center text-red-200"><Globe size={48} /></div>';
             }}
           />
         ) : (
@@ -585,15 +692,16 @@ const TripCard = ({ trip, getTripStatus, calculateDuration, navigate, handleDele
         )}
 
         {/* Status Badge overlay */}
-        {status.key !== 'previous' && (
+        {status.key !== "previous" && (
           <div className="absolute top-6 left-6">
-            <div className={`px-4 py-2 border backdrop-blur-md rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 ${status.color}`}>
+            <div
+              className={`px-4 py-2 border backdrop-blur-md rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 ${status.color}`}
+            >
               {status.icon}
               {status.label}
             </div>
           </div>
         )}
-
       </div>
 
       {/* Content */}
@@ -604,20 +712,37 @@ const TripCard = ({ trip, getTripStatus, calculateDuration, navigate, handleDele
 
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3 text-gray-500">
-            <div className="p-2 bg-gray-50 rounded-lg"><Calendar size={16} /></div>
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Calendar size={16} />
+            </div>
             <span className="text-sm font-bold uppercase tracking-tight">
-              {new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} -
-              {new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              {new Date(trip.startDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              -
+              {new Date(trip.endDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
           </div>
           <div className="flex items-center gap-3 text-gray-500">
-            <div className="p-2 bg-gray-50 rounded-lg"><Clock size={16} /></div>
-            <span className="text-sm font-bold uppercase tracking-tight">{duration} {duration === 1 ? "Day" : "Days"}</span>
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Clock size={16} />
+            </div>
+            <span className="text-sm font-bold uppercase tracking-tight">
+              {duration} {duration === 1 ? "Day" : "Days"}
+            </span>
           </div>
           <div className="flex items-center gap-3 text-gray-500">
-            <div className="p-2 bg-gray-50 rounded-lg"><MapPin size={16} /></div>
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <MapPin size={16} />
+            </div>
             <span className="text-sm font-bold uppercase tracking-tight">
-              {trip.destinations?.length || 0} Destination{(trip.destinations?.length !== 1) ? "s" : ""}
+              {trip.destinations?.length || 0} Destination
+              {trip.destinations?.length !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
@@ -627,7 +752,10 @@ const TripCard = ({ trip, getTripStatus, calculateDuration, navigate, handleDele
           className="mt-auto w-full py-4 bg-gray-900 group-hover:bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all duration-500 shadow-xl shadow-gray-200 group-hover:shadow-red-200"
         >
           View Itinerary
-          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          <ChevronRight
+            size={18}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </button>
       </div>
     </div>

@@ -4,7 +4,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import AnimatedBackground from "../components/layout/AnimatedBackground";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -381,8 +381,6 @@ function AdminDashboardPage() {
                     className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   />
                 </div>
-
-              
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

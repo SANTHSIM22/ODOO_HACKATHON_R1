@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Footer from "../components/layout/Footer";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function ItineraryViewPage() {
   const navigate = useNavigate();

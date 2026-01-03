@@ -24,11 +24,11 @@ import {
   User as UserIcon,
   Edit,
   LogOut,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import Footer from "../components/layout/Footer";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function MyTripsPage() {
   const navigate = useNavigate();
@@ -247,11 +247,18 @@ function MyTripsPage() {
 
                 {isDropdownOpen && (
                   <>
-                    <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)}></div>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    ></div>
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden animate-fade-in-up">
                       <div className="p-4 bg-gray-50 border-b border-gray-100">
-                        <p className="text-sm font-bold text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">{user.email}</p>
+                        <p className="text-sm font-bold text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                          {user.email}
+                        </p>
                       </div>
                       <button
                         onClick={() => navigate("/dashboard/profile")}
@@ -290,13 +297,17 @@ function MyTripsPage() {
               My <span className="text-red-200">Adventures</span>
             </h2>
             <p className="text-lg text-red-50 leading-relaxed font-semibold opacity-90 mb-10">
-              Rediscover your past memories, track current journeys, and plan for future explorations.
+              Rediscover your past memories, track current journeys, and plan
+              for future explorations.
             </p>
             <button
               onClick={() => navigate("/create-trip")}
               className="bg-white text-red-600 px-10 py-4 rounded-2xl hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-300 font-bold uppercase tracking-wider shadow-2xl shadow-black/10 flex items-center gap-3 mx-auto md:mx-0 group w-full md:w-auto justify-center"
             >
-              <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+              <Plus
+                size={20}
+                className="group-hover:rotate-90 transition-transform"
+              />
               Start New Journey
             </button>
           </div>
@@ -304,14 +315,26 @@ function MyTripsPage() {
           <div className="relative z-10 hidden lg:block pr-8">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                <Globe size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
+                <Globe
+                  size={28}
+                  className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform"
+                />
                 <p className="text-3xl font-black">{trips.length}</p>
-                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Trips Recorded</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">
+                  Trips Recorded
+                </p>
               </div>
               <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 text-white min-w-[160px] hover:bg-white/20 transition-all cursor-default group/card">
-                <Clock size={28} className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform" />
-                <p className="text-3xl font-black">{trips.filter(t => new Date(t.endDate) < new Date()).length}</p>
-                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Past Memories</p>
+                <Clock
+                  size={28}
+                  className="text-red-300 mb-3 group-hover/card:scale-110 transition-transform"
+                />
+                <p className="text-3xl font-black">
+                  {trips.filter((t) => new Date(t.endDate) < new Date()).length}
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">
+                  Past Memories
+                </p>
               </div>
             </div>
           </div>
@@ -335,7 +358,10 @@ function MyTripsPage() {
 
           <div className="flex flex-wrap md:flex-nowrap gap-2">
             <div className="relative flex-1 md:w-48">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              <Filter
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={16}
+              />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -349,7 +375,10 @@ function MyTripsPage() {
             </div>
 
             <div className="relative flex-1 md:w-48">
-              <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              <Layers
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={16}
+              />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -366,20 +395,22 @@ function MyTripsPage() {
             <div className="flex bg-white border border-gray-100 rounded-2xl p-1.5 shadow-sm">
               <button
                 onClick={() => setViewMode("grouped")}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${viewMode === "grouped"
-                  ? "bg-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-400 hover:text-gray-600"
-                  }`}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${
+                  viewMode === "grouped"
+                    ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
                 title="Grouped View"
               >
                 <LayoutGrid size={20} />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${viewMode === "list"
-                  ? "bg-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-400 hover:text-gray-600"
-                  }`}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${
+                  viewMode === "list"
+                    ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
                 title="List View"
               >
                 <List size={20} />
@@ -405,16 +436,21 @@ function MyTripsPage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
-              <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">Retrieving your journeys...</p>
+              <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">
+                Retrieving your journeys...
+              </p>
             </div>
           ) : trips.length === 0 ? (
             <div className="bg-white rounded-[2.5rem] border-2 border-dashed border-gray-100 p-12 md:p-20 text-center">
               <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Globe size={32} className="text-gray-300" />
               </div>
-              <h3 className="text-2xl font-black text-gray-900 mb-2">No trips found</h3>
+              <h3 className="text-2xl font-black text-gray-900 mb-2">
+                No trips found
+              </h3>
               <p className="text-gray-500 max-w-sm mx-auto font-medium mb-10">
-                Your travel history is currently empty. Start your journey by creating your first trip package.
+                Your travel history is currently empty. Start your journey by
+                creating your first trip package.
               </p>
               <button
                 onClick={() => navigate("/create-trip")}
@@ -433,12 +469,16 @@ function MyTripsPage() {
                       <div className="p-3 bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-500">
                         <Zap size={24} />
                       </div>
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Active</span>
+                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+                        Active
+                      </span>
                     </div>
                     <p className="text-4xl font-black text-gray-900 leading-none">
                       {displayTrips.ongoing.length}
                     </p>
-                    <p className="text-sm font-bold text-gray-400 mt-1">Active Journeys</p>
+                    <p className="text-sm font-bold text-gray-400 mt-1">
+                      Active Journeys
+                    </p>
                   </div>
 
                   <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
@@ -446,12 +486,16 @@ function MyTripsPage() {
                       <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
                         <Calendar size={24} />
                       </div>
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Future</span>
+                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+                        Future
+                      </span>
                     </div>
                     <p className="text-4xl font-black text-gray-900 leading-none">
                       {displayTrips.upcoming.length}
                     </p>
-                    <p className="text-sm font-bold text-gray-400 mt-1">Upcoming Escapes</p>
+                    <p className="text-sm font-bold text-gray-400 mt-1">
+                      Upcoming Escapes
+                    </p>
                   </div>
 
                   <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
@@ -459,12 +503,16 @@ function MyTripsPage() {
                       <div className="p-3 bg-gray-50 text-gray-600 rounded-2xl group-hover:bg-gray-900 group-hover:text-white transition-colors duration-500">
                         <Clock size={24} />
                       </div>
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Past</span>
+                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+                        Past
+                      </span>
                     </div>
                     <p className="text-4xl font-black text-gray-900 leading-none">
                       {displayTrips.completed.length}
                     </p>
-                    <p className="text-sm font-bold text-gray-400 mt-1">Past Memories</p>
+                    <p className="text-sm font-bold text-gray-400 mt-1">
+                      Past Memories
+                    </p>
                   </div>
                 </div>
               )}
@@ -472,74 +520,80 @@ function MyTripsPage() {
               {/* Trips Display */}
               <div className="space-y-20">
                 {viewMode === "grouped" ? (
-                  Object.entries(displayTrips).map(([statusKey, statusTrips]) => {
-                    const statusConfig = {
-                      ongoing: {
-                        title: "Active Journeys",
-                        subtitle: "Trips you're currently exploring",
-                        color: "bg-green-50 text-green-600",
-                        icon: <Zap size={20} />,
-                      },
-                      upcoming: {
-                        title: "Upcoming Escapes",
-                        subtitle: "The adventures waiting for you",
-                        color: "bg-blue-50 text-blue-600",
-                        icon: <Calendar size={20} />,
-                      },
-                      completed: {
-                        title: "Past Memories",
-                        subtitle: "Your completed world explorations",
-                        color: "bg-gray-100 text-gray-600",
-                        icon: <Clock size={20} />,
-                      },
-                    };
+                  Object.entries(displayTrips).map(
+                    ([statusKey, statusTrips]) => {
+                      const statusConfig = {
+                        ongoing: {
+                          title: "Active Journeys",
+                          subtitle: "Trips you're currently exploring",
+                          color: "bg-green-50 text-green-600",
+                          icon: <Zap size={20} />,
+                        },
+                        upcoming: {
+                          title: "Upcoming Escapes",
+                          subtitle: "The adventures waiting for you",
+                          color: "bg-blue-50 text-blue-600",
+                          icon: <Calendar size={20} />,
+                        },
+                        completed: {
+                          title: "Past Memories",
+                          subtitle: "Your completed world explorations",
+                          color: "bg-gray-100 text-gray-600",
+                          icon: <Clock size={20} />,
+                        },
+                      };
 
-                    if (statusKey === 'all') return null;
+                      if (statusKey === "all") return null;
 
-                    return (
-                      <div key={statusKey} className="space-y-8">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-8">
-                          <div className="flex items-center gap-5">
-                            <div className={`p-4 rounded-[1.25rem] ${statusConfig[statusKey].color} shadow-sm`}>
-                              {statusConfig[statusKey].icon}
+                      return (
+                        <div key={statusKey} className="space-y-8">
+                          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-8">
+                            <div className="flex items-center gap-5">
+                              <div
+                                className={`p-4 rounded-[1.25rem] ${statusConfig[statusKey].color} shadow-sm`}
+                              >
+                                {statusConfig[statusKey].icon}
+                              </div>
+                              <div>
+                                <h3 className="text-3xl font-black text-gray-900">
+                                  {statusConfig[statusKey].title}
+                                </h3>
+                                <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">
+                                  {statusConfig[statusKey].subtitle} •{" "}
+                                  {statusTrips.length} Destinations
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="text-3xl font-black text-gray-900">
-                                {statusConfig[statusKey].title}
-                              </h3>
-                              <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">
-                                {statusConfig[statusKey].subtitle} • {statusTrips.length} Destinations
+                          </div>
+
+                          {statusTrips.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              {statusTrips.map((trip) => (
+                                <TripCard
+                                  key={trip._id}
+                                  trip={trip}
+                                  getTripStatus={getTripStatus}
+                                  calculateDuration={calculateDuration}
+                                  navigate={navigate}
+                                  handleDelete={handleDelete}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="bg-white/30 rounded-[2.5rem] border border-dashed border-gray-200 py-20 text-center">
+                              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Plus size={24} className="text-gray-300" />
+                              </div>
+                              <p className="text-gray-400 font-black uppercase tracking-widest text-[11px]">
+                                No {statusConfig[statusKey].title.toLowerCase()}{" "}
+                                recorded
                               </p>
                             </div>
-                          </div>
+                          )}
                         </div>
-
-                        {statusTrips.length > 0 ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {statusTrips.map((trip) => (
-                              <TripCard
-                                key={trip._id}
-                                trip={trip}
-                                getTripStatus={getTripStatus}
-                                calculateDuration={calculateDuration}
-                                navigate={navigate}
-                                handleDelete={handleDelete}
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="bg-white/30 rounded-[2.5rem] border border-dashed border-gray-200 py-20 text-center">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                              <Plus size={24} className="text-gray-300" />
-                            </div>
-                            <p className="text-gray-400 font-black uppercase tracking-widest text-[11px]">
-                              No {statusConfig[statusKey].title.toLowerCase()} recorded
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
+                      );
+                    }
+                  )
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {displayTrips.all.map((trip) => (
@@ -579,7 +633,7 @@ function TripCard({
   const statusColors = {
     upcoming: "bg-blue-600 shadow-blue-200",
     ongoing: "bg-green-600 shadow-green-200",
-    completed: "bg-gray-600 shadow-gray-200"
+    completed: "bg-gray-600 shadow-gray-200",
   };
 
   const handleEdit = (e) => {
@@ -588,8 +642,10 @@ function TripCard({
   };
 
   return (
-    <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-50 overflow-hidden flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
-      onClick={() => navigate(`/trip/${trip._id}`)}>
+    <div
+      className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/40 border border-gray-50 overflow-hidden flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+      onClick={() => navigate(`/trip/${trip._id}`)}
+    >
       <div className="relative h-64 overflow-hidden bg-gray-100">
         {trip.coverPhoto ? (
           <img
@@ -598,7 +654,8 @@ function TripCard({
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=400";
+              e.target.src =
+                "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=400";
             }}
           />
         ) : (
@@ -608,7 +665,11 @@ function TripCard({
         )}
 
         <div className="absolute top-6 right-6 flex flex-col gap-2">
-          <div className={`px-4 py-2 ${statusColors[status.key]} text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg text-center`}>
+          <div
+            className={`px-4 py-2 ${
+              statusColors[status.key]
+            } text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg text-center`}
+          >
             {status.label}
           </div>
           <div className="flex gap-2">
@@ -647,23 +708,39 @@ function TripCard({
 
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3 text-gray-500">
-            <div className="p-2 bg-gray-50 rounded-lg"><Calendar size={16} className="text-red-500" /></div>
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <Calendar size={16} className="text-red-500" />
+            </div>
             <span className="text-xs font-bold uppercase tracking-widest">
-              {new Date(trip.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} -
-              {new Date(trip.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              {new Date(trip.startDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              -
+              {new Date(trip.endDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
           </div>
           <div className="flex items-center gap-3 text-gray-500">
-            <div className="p-2 bg-gray-50 rounded-lg"><MapPin size={16} className="text-red-500" /></div>
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <MapPin size={16} className="text-red-500" />
+            </div>
             <span className="text-xs font-bold uppercase tracking-widest">
-              {trip.destinations?.length || 0} {trip.destinations?.length === 1 ? "Stop" : "Stops"} in Itinerary
+              {trip.destinations?.length || 0}{" "}
+              {trip.destinations?.length === 1 ? "Stop" : "Stops"} in Itinerary
             </span>
           </div>
         </div>
 
         <button className="mt-auto w-full py-4 bg-gray-900 group-hover:bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 transition-all duration-500 shadow-xl shadow-gray-200 group-hover:shadow-red-200">
           View Full Journey
-          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          <ChevronRight
+            size={18}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </button>
       </div>
     </div>

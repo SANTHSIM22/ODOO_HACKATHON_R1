@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace("/api", "")}/api/auth`
+  : "http://localhost:5000/api/auth";
 
 function Login({ setUser }) {
   const [formData, setFormData] = useState({

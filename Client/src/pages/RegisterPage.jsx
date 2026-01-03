@@ -106,7 +106,9 @@ function RegisterPage() {
     }
 
     // Real API call
-    const API_URL = "http://localhost:5000/api/auth";
+    const API_URL = import.meta.env.VITE_API_URL
+      ? `${import.meta.env.VITE_API_URL.replace("/api", "")}/api/auth`
+      : "http://localhost:5000/api/auth";
 
     fetch(`${API_URL}/register`, {
       method: "POST",
@@ -151,19 +153,19 @@ function RegisterPage() {
   return (
     <div className="min-h-screen relative">
       <AnimatedBackground />
-      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+      <Navbar
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
       <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden">
-
-
         {/* Main Container */}
         <div className="relative z-10 w-full max-w-2xl">
-
-
-
           {/* Register Card */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Create Account</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+              Create Account
+            </h2>
             <p className="text-gray-600 text-sm mb-8 text-center">
               Join thousands of travelers planning their journeys
             </p>
@@ -206,8 +208,18 @@ function RegisterPage() {
                   )}
                 </div>
                 <div className="absolute bottom-1 right-1 bg-red-700 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                 </div>
                 <input
@@ -224,7 +236,9 @@ function RegisterPage() {
               {/* Personal Details Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    First Name
+                  </label>
                   <input
                     type="text"
                     name="firstName"
@@ -235,7 +249,9 @@ function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Last Name
+                  </label>
                   <input
                     type="text"
                     name="lastName"
@@ -250,7 +266,9 @@ function RegisterPage() {
               {/* Contact Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Email Address
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -261,7 +279,9 @@ function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     name="phoneNumber"
@@ -276,7 +296,9 @@ function RegisterPage() {
               {/* Location Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    City
+                  </label>
                   <input
                     type="text"
                     name="city"
@@ -287,7 +309,9 @@ function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Country
+                  </label>
                   <input
                     type="text"
                     name="country"
@@ -301,7 +325,9 @@ function RegisterPage() {
 
               {/* Additional Info */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Information</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Additional Information
+                </label>
                 <textarea
                   name="additionalInfo"
                   value={formData.additionalInfo}
@@ -314,7 +340,9 @@ function RegisterPage() {
 
               {/* Username */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Username
+                </label>
                 <input
                   type="text"
                   name="username"
@@ -328,7 +356,9 @@ function RegisterPage() {
               {/* Password Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Password
+                  </label>
                   <input
                     type="password"
                     name="password"
@@ -339,7 +369,9 @@ function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Confirm Password
+                  </label>
                   <input
                     type="password"
                     name="confirmPassword"
@@ -358,8 +390,18 @@ function RegisterPage() {
                   id="terms"
                   className="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer mt-0.5"
                 />
-                <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer">
-                  I agree to the <Link to="#" className="text-red-700 hover:text-red-800 font-bold transition-colors">Terms & Conditions</Link> and Privacy Policy
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-gray-600 cursor-pointer"
+                >
+                  I agree to the{" "}
+                  <Link
+                    to="#"
+                    className="text-red-700 hover:text-red-800 font-bold transition-colors"
+                  >
+                    Terms & Conditions
+                  </Link>{" "}
+                  and Privacy Policy
                 </label>
               </div>
 
@@ -381,14 +423,21 @@ function RegisterPage() {
 
             {/* Sign In Link */}
             <p className="text-center text-gray-600 text-sm mt-8">
-              Already have an account? <Link to="/login" className="text-red-700 hover:text-red-800 font-bold transition-colors">Login here</Link>
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-red-700 hover:text-red-800 font-bold transition-colors"
+              >
+                Login here
+              </Link>
             </p>
           </div>
 
           {/* Trust Badge */}
           <div className="mt-8 text-center animate-fade-in-up">
             <p className="text-gray-500 text-xs flex items-center justify-center gap-2">
-              <span className="text-green-500 font-bold">✓</span> Secure registration • Your data is encrypted
+              <span className="text-green-500 font-bold">✓</span> Secure
+              registration • Your data is encrypted
             </p>
           </div>
         </div>

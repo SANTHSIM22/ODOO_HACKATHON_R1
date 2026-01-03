@@ -1,0 +1,77 @@
+# Production Docker Compose for deployment
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: globetrotter-db-prod
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mongodb_prod_data:/data/db
+      - ./Server/mongo-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - globetrotter-prod-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  server:
+    build: ./Server
+    container_name: globetrotter-server-prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=mongodb://${DB_USERNAME}:${DB_PASSWORD}@mongodb:27017/globetrotter?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - globetrotter-prod-network
+    volumes:
+      - ./Server/logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: globetrotter-client-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - globetrotter-prod-network
+    volumes:
+      - ./ssl:/etc/nginx/ssl:ro
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+volumes:
+  mongodb_prod_data:
+
+networks:
+  globetrotter-prod-network:
+    driver: bridge
