@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import AnimatedBackground from "../components/layout/AnimatedBackground";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -10,6 +13,7 @@ function AdminDashboardPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingTrip, setEditingTrip] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     destination: "",
     country: "",
@@ -18,14 +22,24 @@ function AdminDashboardPage() {
     startDate: "",
     endDate: "",
     budget: "",
-    image: "🌍",
+    image: "",
     imageUrl: "",
     category: "recommended",
     activities: [],
     specialOffer: 0,
     recommendedByTravelers: false,
   });
-
+  // Lock scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
   useEffect(() => {
     const adminData = localStorage.getItem("admin");
     if (!adminData) {
@@ -105,7 +119,7 @@ function AdminDashboardPage() {
           startDate: "",
           endDate: "",
           budget: "",
-          image: "🌍",
+          image: "",
           imageUrl: "",
           category: "recommended",
           activities: [],
@@ -199,7 +213,7 @@ function AdminDashboardPage() {
       startDate: "",
       endDate: "",
       budget: "",
-      image: "🌍",
+      image: "",
       imageUrl: "",
       category: "recommended",
       activities: [],
@@ -210,43 +224,27 @@ function AdminDashboardPage() {
 
   if (!admin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="min-h-screen relative flex items-center justify-center">
+        <AnimatedBackground />
+        <div className="text-xl text-gray-600 relative z-10">Loading...</div>
       </div>
     );
   }
 
-  const emojiOptions = [
-    "🌍",
-    "🗼",
-    "🗾",
-    "🗽",
-    "🏝️",
-    "🏛️",
-    "🏙️",
-    "🏖️",
-    "⛰️",
-    "🏔️",
-    "🌴",
-    "🎡",
-    "🎢",
-    "🎪",
-    "🎭",
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
-      <header className="bg-white shadow-md sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen relative">
+      <AnimatedBackground />
+
+      <header className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-white/50 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <span className="text-3xl">🔐</span>
-              <div>
-                <h1 className="text-2xl font-bold text-red-600">
-                  Admin Dashboard
-                </h1>
-                <p className="text-sm text-gray-600">GlobeTrotter Management</p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Admin Dashboard
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage trips and travel destinations
+              </p>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-700 font-medium hidden sm:inline">
@@ -254,7 +252,7 @@ function AdminDashboardPage() {
               </span>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200 font-semibold text-sm"
+                className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white px-6 py-2.5 rounded-lg transition-all duration-300 font-semibold text-sm shadow-lg"
               >
                 Logout
               </button>
@@ -263,11 +261,11 @@ function AdminDashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
                 Trip Management
               </h2>
               <p className="text-gray-600">
@@ -276,16 +274,16 @@ function AdminDashboardPage() {
             </div>
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-lg hover:from-red-600 hover:to-orange-600 transition duration-200 font-semibold shadow-lg"
+              className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white px-6 py-3 rounded-lg transition-all duration-300 font-semibold shadow-xl"
             >
-              {showAddForm ? "Cancel" : "+ Add New Trip"}
+              {showAddForm ? "Cancel" : "Add New Trip"}
             </button>
           </div>
         </div>
 
         {showAddForm && (
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-2xl p-8 mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
               {editingTrip ? "Edit Trip" : "Add New Trip"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -300,7 +298,7 @@ function AdminDashboardPage() {
                     value={formData.destination}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                     placeholder="e.g., Paris, France"
                   />
                 </div>
@@ -314,7 +312,7 @@ function AdminDashboardPage() {
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                     placeholder="e.g., France"
                   />
                 </div>
@@ -328,7 +326,7 @@ function AdminDashboardPage() {
                     value={formData.continent}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   >
                     <option value="Africa">Africa</option>
                     <option value="Antarctica">Antarctica</option>
@@ -351,7 +349,7 @@ function AdminDashboardPage() {
                     onChange={handleInputChange}
                     required
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                     placeholder="e.g., 2500"
                   />
                 </div>
@@ -366,7 +364,7 @@ function AdminDashboardPage() {
                     value={formData.startDate}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   />
                 </div>
 
@@ -380,26 +378,8 @@ function AdminDashboardPage() {
                     value={formData.endDate}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Icon Emoji
-                  </label>
-                  <select
-                    name="image"
-                    value={formData.image}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    {emojiOptions.map((emoji) => (
-                      <option key={emoji} value={emoji}>
-                        {emoji} {emoji}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 <div>
@@ -410,7 +390,7 @@ function AdminDashboardPage() {
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   >
                     <option value="recommended">Recommended</option>
                     <option value="popular">Popular</option>
@@ -428,7 +408,7 @@ function AdminDashboardPage() {
                     value={formData.specialOffer}
                     onChange={handleInputChange}
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                     placeholder="Enter special price (0 = no offer)"
                   />
                   <p className="text-xs text-gray-500 mt-1">
@@ -466,7 +446,7 @@ function AdminDashboardPage() {
                   name="imageUrl"
                   value={formData.imageUrl}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   placeholder="https://example.com/image.jpg"
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -484,7 +464,7 @@ function AdminDashboardPage() {
                   onChange={handleInputChange}
                   required
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                   placeholder="Brief description of the trip..."
                 />
               </div>
@@ -513,9 +493,9 @@ function AdminDashboardPage() {
                         });
                       }
                     }}
-                    className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
+                    className="px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white text-sm rounded-lg transition-all duration-300 font-semibold shadow-lg"
                   >
-                    + Add Activity
+                    Add Activity
                   </button>
                 </div>
 
@@ -557,7 +537,7 @@ function AdminDashboardPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200 font-semibold disabled:bg-red-400"
+                  className="flex-1 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white py-4 px-4 rounded-xl transition-all duration-300 font-bold shadow-xl shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {loading
                     ? "Saving..."
@@ -568,7 +548,7 @@ function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={cancelForm}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200 font-semibold"
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-4 px-4 rounded-xl transition-all duration-300 font-bold active:scale-[0.98]"
                 >
                   Cancel
                 </button>
@@ -577,8 +557,8 @@ function AdminDashboardPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-2xl p-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">
             All Trips ({trips.length})
           </h3>
 
@@ -587,7 +567,7 @@ function AdminDashboardPage() {
               <p className="text-gray-500 text-lg mb-4">No trips yet!</p>
               <button
                 onClick={() => setShowAddForm(true)}
-                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-200 font-semibold"
+                className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white px-6 py-3 rounded-lg transition-all duration-300 font-semibold shadow-xl"
               >
                 Add Your First Trip
               </button>
@@ -597,9 +577,6 @@ function AdminDashboardPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Icon
-                    </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Image
                     </th>
@@ -626,9 +603,6 @@ function AdminDashboardPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {trips.map((trip) => (
                     <tr key={trip._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap text-2xl">
-                        {trip.image}
-                      </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         {trip.imageUrl ? (
                           <img
@@ -681,13 +655,13 @@ function AdminDashboardPage() {
                       <td className="px-4 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => handleEdit(trip)}
-                          className="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold"
+                          className="text-blue-600 hover:text-blue-800 mr-3 font-semibold transition-colors"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(trip._id)}
-                          className="text-red-600 hover:text-red-900 font-semibold"
+                          className="text-red-600 hover:text-red-800 font-semibold transition-colors"
                         >
                           Delete
                         </button>
@@ -700,6 +674,8 @@ function AdminDashboardPage() {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }
