@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const tripRoutes = require("./routes/tripRoutes");
+const userTripRoutes = require("./routes/userTripRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api", tripRoutes);
+app.use("/api", userTripRoutes);
 
 
 app.get("/health", (req, res) => {

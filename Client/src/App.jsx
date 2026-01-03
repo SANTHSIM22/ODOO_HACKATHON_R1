@@ -5,6 +5,10 @@ import RegisterPage from "./pages/RegisterPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import CreateTripPage from "./pages/CreateTripPage";
+import MyTripsPage from "./pages/MyTripsPage";
+import CustomTripPage from "./pages/CustomTripPage";
 import "./App.css";
 
 function App() {
@@ -17,6 +21,10 @@ function App() {
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+        <Route path="/create-trip" element={<CreateTripPage />} />
+        <Route path="/my-trips" element={<MyTripsPage />} />
+        <Route path="/custom-trip" element={<CustomTripPage />} />
       </Routes>
     </Router>
   );
