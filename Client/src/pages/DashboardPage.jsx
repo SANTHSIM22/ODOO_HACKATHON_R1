@@ -24,7 +24,7 @@ function DashboardPage() {
     };
 
     const handlePlanNewTrip = () => {
-        alert("Trip planning feature coming soon!");
+        navigate("/plan-trip");
     };
 
     if (!user) {
