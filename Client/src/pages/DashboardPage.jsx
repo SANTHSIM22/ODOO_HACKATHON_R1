@@ -10,6 +10,7 @@ function DashboardPage() {
   const [recommendedDestinations, setRecommendedDestinations] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedContinent, setSelectedContinent] = useState(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -47,6 +48,7 @@ function DashboardPage() {
         category: trip.category,
         specialOffer: trip.specialOffer,
         recommendedByTravelers: trip.recommendedByTravelers,
+        continent: trip.continent,
       }));
       setAvailableTrips(formattedTrips);
     } catch (error) {
@@ -104,13 +106,57 @@ function DashboardPage() {
     return Math.round(total / availableTripsOnly.length);
   };
 
-  const regionalSelections = [
-    { id: 1, name: "Europe", color: "from-blue-500 to-blue-600" },
-    { id: 2, name: "Asia", color: "from-emerald-500 to-emerald-600" },
-    { id: 3, name: "Americas", color: "from-violet-500 to-violet-600" },
-    { id: 4, name: "Africa", color: "from-amber-500 to-amber-600" },
-    { id: 5, name: "Oceania", color: "from-cyan-500 to-cyan-600" },
+  // Get regional selections - show all 7 continents
+  const continentColors = {
+    Africa: "from-amber-500 to-amber-600",
+    Antarctica: "from-slate-500 to-slate-600",
+    Asia: "from-emerald-500 to-emerald-600",
+    Europe: "from-blue-500 to-blue-600",
+    "North America": "from-violet-500 to-violet-600",
+    Oceania: "from-cyan-500 to-cyan-600",
+    "South America": "from-rose-500 to-rose-600",
+  };
+
+  const allContinents = [
+    "Africa",
+    "Antarctica",
+    "Asia",
+    "Europe",
+    "North America",
+    "Oceania",
+    "South America",
   ];
+
+  const getRegionalSelections = () => {
+    // Count trips for each continent
+    const continentMap = {};
+
+    allContinents.forEach((continent) => {
+      continentMap[continent] = {
+        name: continent,
+        count: 0,
+        trips: [],
+      };
+    });
+
+    // Add trips to their respective continents
+    availableTrips.forEach((trip) => {
+      if (trip.continent && continentMap[trip.continent]) {
+        continentMap[trip.continent].count++;
+        continentMap[trip.continent].trips.push(trip);
+      }
+    });
+
+    return allContinents.map((continent, index) => ({
+      id: index + 1,
+      name: continent,
+      color: continentColors[continent] || "from-gray-500 to-gray-600",
+      count: continentMap[continent].count,
+      trips: continentMap[continent].trips,
+    }));
+  };
+
+  const regionalSelections = getRegionalSelections();
 
   const previousTrips = [
     { id: 1, destination: "Paris, France", date: "Dec 2025" },
@@ -494,108 +540,151 @@ function DashboardPage() {
           )}
         </div>
 
-        {/* Recommended Destinations */}
+        {/* Recommended Destinations - Top Regional Selections */}
         <div className="mb-12">
           <div className="mb-6">
             <h3 className="text-2xl font-bold text-black">
-              Recommended Destinations
+              Top Regional Selections
             </h3>
             <p className="text-gray-600 text-sm mt-2">
-              Handpicked by our travel experts
-              {searchQuery && filteredRecommendedDestinations.length > 0 && (
-                <span className="text-red-600 font-semibold">
-                  {" "}
-                  - {filteredRecommendedDestinations.length} result
-                  {filteredRecommendedDestinations.length !== 1 ? "s" : ""}
-                </span>
-              )}
+              Explore destinations by continent
             </p>
           </div>
 
-          {filteredRecommendedDestinations.length === 0 && searchQuery ? (
-            <div className="bg-white rounded-2xl shadow-md border border-dashed border-gray-300 p-8 text-center">
-              <p className="text-gray-500">
-                No recommended destinations match your search
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredRecommendedDestinations.map((destination) => (
-                <div
-                  key={destination.id}
-                  className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden hover:shadow-xl hover:border-red-300 transition-all duration-300 group cursor-pointer hover:-translate-y-1"
-                >
-                  {destination.imageUrl ? (
-                    <div className="relative h-48 overflow-hidden bg-gray-100">
-                      <img
-                        src={destination.imageUrl}
-                        alt={destination.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 font-semibold">Image</div>`;
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                      <span className="text-gray-400 font-semibold">Image</span>
-                    </div>
-                  )}
-                  <div className="p-5">
-                    <h4 className="text-lg font-bold text-black mb-2 group-hover:text-red-600 transition">
-                      {destination.name}
-                    </h4>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                      {destination.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-gray-500">Starting from</p>
-                        <p className="text-lg font-bold text-black">
-                          ${destination.estimatedBudget.toLocaleString()}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleBookTrip(destination.id)}
-                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition text-sm font-semibold shadow-sm"
-                      >
-                        Book
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Top Regional Selections */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-black mb-6">
-            Top Regional Selections
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {/* All 7 Continents */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
             {regionalSelections.map((region) => (
               <div
                 key={region.id}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-red-300"
+                onClick={() =>
+                  setSelectedContinent(
+                    region.name === selectedContinent ? null : region.name
+                  )
+                }
+                className={`bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border-2 ${
+                  selectedContinent === region.name
+                    ? "border-red-500 ring-2 ring-red-200"
+                    : "border-gray-200 hover:border-red-300"
+                }`}
               >
                 <div
-                  className={`aspect-square bg-gradient-to-br ${region.color} flex items-center justify-center`}
+                  className={`aspect-square bg-gradient-to-br ${region.color} flex items-center justify-center relative`}
                 >
-                  <span className="text-white font-semibold text-sm">
+                  <span className="text-white font-bold text-3xl">
                     {region.name.charAt(0)}
                   </span>
+                  {region.count > 0 && (
+                    <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1">
+                      <span className="text-xs font-semibold text-gray-700">
+                        {region.count}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="p-4 text-center">
-                  <h4 className="font-semibold text-gray-800 text-sm">
+                <div className="p-3 text-center">
+                  <h4 className="font-semibold text-gray-800 text-xs">
                     {region.name}
                   </h4>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Show trips from selected continent */}
+          {selectedContinent ? (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-xl font-bold text-gray-800">
+                  {selectedContinent} Destinations
+                </h4>
+                <button
+                  onClick={() => setSelectedContinent(null)}
+                  className="text-sm text-red-600 hover:text-red-700 font-semibold"
+                >
+                  Clear Selection
+                </button>
+              </div>
+              {regionalSelections.find((r) => r.name === selectedContinent)
+                ?.trips.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {regionalSelections
+                    .find((r) => r.name === selectedContinent)
+                    ?.trips.map((trip) => (
+                      <div
+                        key={trip.id}
+                        className="bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-red-300"
+                      >
+                        {trip.imageUrl ? (
+                          <img
+                            src={trip.imageUrl}
+                            alt={trip.destination}
+                            className="w-full h-48 object-cover"
+                          />
+                        ) : (
+                          <div className="h-48 bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center">
+                            <span className="text-6xl">{trip.image}</span>
+                          </div>
+                        )}
+                        <div className="p-5">
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-lg font-bold text-gray-800">
+                              {trip.destination}
+                            </h4>
+                            {trip.specialOffer > 0 && (
+                              <span className="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full font-semibold whitespace-nowrap ml-2">
+                                🎁 ${trip.specialOffer.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                          {trip.recommendedByTravelers && (
+                            <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-semibold mb-2">
+                              ⭐ Recommended by Travelers
+                            </span>
+                          )}
+                          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                            {trip.description}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <span>
+                              {new Date(trip.startDate).toLocaleDateString(
+                                "en-US",
+                                { month: "short", day: "numeric" }
+                              )}{" "}
+                              -{" "}
+                              {new Date(trip.endDate).toLocaleDateString(
+                                "en-US",
+                                { month: "short", day: "numeric" }
+                              )}
+                            </span>
+                            <span className="font-semibold text-gray-800">
+                              ${trip.budget.toLocaleString()}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => handleBookTrip(trip.id)}
+                            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-300 font-medium"
+                          >
+                            Book Now
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-gray-50 rounded-xl">
+                  <p className="text-gray-500">
+                    No destinations available for {selectedContinent} yet.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-gray-50 rounded-xl">
+              <p className="text-gray-500">
+                Click on a continent to view available destinations
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Previous Trips */}

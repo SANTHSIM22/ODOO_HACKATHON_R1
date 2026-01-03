@@ -115,6 +115,45 @@ const communityController = {
       });
     }
   },
+
+  // Update a post
+  updatePost: async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const { placeName, location, description, imageUrl, tips } = req.body;
+
+      const post = await CommunityPost.findByIdAndUpdate(
+        postId,
+        {
+          placeName,
+          location,
+          description,
+          imageUrl,
+          tips,
+        },
+        { new: true }
+      );
+
+      if (!post) {
+        return res.status(404).json({
+          success: false,
+          message: "Post not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Post updated successfully",
+        post,
+      });
+    } catch (error) {
+      console.error("Error updating post:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error updating post",
+      });
+    }
+  },
 };
 
 module.exports = communityController;

@@ -11,6 +11,9 @@ router.post("/posts", communityController.createPost);
 // Get posts by user
 router.get("/posts/user/:userId", communityController.getUserPosts);
 
+// Update a post
+router.put("/posts/:postId", communityController.updatePost);
+
 // Delete a post
 router.delete("/posts/:postId", communityController.deletePost);
 
