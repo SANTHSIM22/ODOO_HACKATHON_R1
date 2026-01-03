@@ -141,28 +141,7 @@ function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-xs text-gray-500">OR</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
 
-          {/* Social Login Options */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="py-3 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg text-black font-medium transition-all text-sm"
-            >
-              Google
-            </button>
-            <button
-              type="button"
-              className="py-3 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg text-black font-medium transition-all text-sm"
-            >
-              GitHub
-            </button>
-          </div>
 
           <p className="text-center text-black text-sm mt-6">
             Don't have an account?{" "}
