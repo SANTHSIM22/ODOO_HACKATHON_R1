@@ -67,17 +67,17 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+    <div className="min-h-screen relative">
+      <AnimatedBackground />
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
       <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden">
 
 
         {/* Main Container */}
         <div className="relative z-10 w-full max-w-md">
+
+
           {/* Login Card */}
           <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-2xl">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
