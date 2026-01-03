@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
-// If Navbar doesn't exist or isn't suitable, I'll create a simple one or omit it for now based on the file list I saw earlier (Navbar.jsx wasn't in the list in step 8, wait, I queried components in step 6 and it said 3 children, step 8 list_dir only showed subdirs/files count, let me check step 14 I tried to view Navbar.jsx and it failed).
-// Okay, LandingPage has a header. I will duplicate the header for now or create a simpler one.
-// Let's create a standalone page first.
+
 
 const UserProfilePage = () => {
-    // Mock data
+
     const user = {
         name: "John Doe",
         email: "john.doe@example.com",
@@ -25,8 +23,8 @@ const UserProfilePage = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-brand-pale font-sans">
-            {/* Header */}
+        <div className="min-h-screen font-sans">
+
             <header className="bg-white shadow-sm border-b border-brand-light">
                 <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                     <Link to="/" className="text-2xl font-bold text-brand-dark hover:text-brand-medium transition">
@@ -48,8 +46,8 @@ const UserProfilePage = () => {
 
             <main className="w-full px-4 sm:px-6 lg:px-8 py-10">
 
-                {/* User Info Section */}
-                <section className="bg-white rounded-2xl shadow-xl p-8 mb-12 border border-brand-light flex flex-col md:flex-row gap-8 items-center md:items-start">
+
+                <section className="bg-brand-pale rounded-2xl shadow-xl p-8 mb-12 border border-brand-light flex flex-col md:flex-row gap-8 items-center md:items-start">
                     <div className="flex-shrink-0">
                         <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-brand-medium shadow-md">
                             <img src={user.image} alt="User" className="w-full h-full object-cover" />
@@ -65,7 +63,7 @@ const UserProfilePage = () => {
                     </div>
 
                     <div className="flex flex-col gap-4 min-w-[160px] self-center">
-                        <button className="text-lg bg-brand-pale text-brand-dark px-6 py-3 rounded-xl hover:bg-brand-light transition font-bold text-center shadow-md">
+                        <button className="text-lg bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition font-bold text-center border border-gray-300 shadow-sm">
                             Edit
                         </button>
                         <button className="text-lg bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition font-bold text-center border border-gray-300 shadow-sm">
@@ -74,12 +72,12 @@ const UserProfilePage = () => {
                     </div>
                 </section>
 
-                {/* Preplanned Trips */}
+
                 <section className="mb-12">
                     <h3 className="text-2xl font-bold text-brand-dark mb-6 border-b-2 border-brand-medium inline-block pb-1">Preplanned Trips</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {preplannedTrips.map(trip => (
-                            <div key={trip.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition border border-brand-light flex flex-col">
+                            <div key={trip.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition border-2 border-transparent hover:border-brand-medium flex flex-col">
                                 <div className="h-48 overflow-hidden">
                                     <img src={trip.image} alt={trip.title} className="w-full h-full object-cover transition transform hover:scale-105" />
                                 </div>
@@ -101,7 +99,7 @@ const UserProfilePage = () => {
                     <h3 className="text-2xl font-bold text-brand-dark mb-6 border-b-2 border-brand-medium inline-block pb-1">Previous Trips</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {previousTrips.map(trip => (
-                            <div key={trip.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition border border-brand-light flex flex-col">
+                            <div key={trip.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition border-2 border-transparent hover:border-brand-medium flex flex-col">
                                 <div className="h-48 overflow-hidden">
                                     <img src={trip.image} alt={trip.title} className="w-full h-full object-cover transition transform hover:scale-105" />
                                 </div>
