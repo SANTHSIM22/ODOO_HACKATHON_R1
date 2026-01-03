@@ -62,14 +62,16 @@ function CreateTripPage() {
 
       console.log("Fetched data:", data);
 
-      if (data.success && data.trips) {
-        setAvailablePackages(data.trips);
-        setFilteredPackages(data.trips);
-      } else {
-        console.error("Invalid response format:", data);
-        setAvailablePackages([]);
-        setFilteredPackages([]);
-      }
+      // Handle both response formats - direct array or object with trips property
+      const tripsArray = Array.isArray(data)
+        ? data
+        : data.success
+        ? data.trips
+        : [];
+
+      setAvailablePackages(tripsArray);
+      setFilteredPackages(tripsArray);
+      console.log("Set packages:", tripsArray.length, "items");
     } catch (error) {
       console.error("Error fetching packages:", error);
       setAvailablePackages([]);
@@ -270,7 +272,7 @@ function CreateTripPage() {
             </div>
 
             {/* Search Results Dropdown */}
-            {showResults && !selectedPackage && searchQuery && (
+            {showResults && !selectedPackage && (
               <div className="absolute w-full mt-2 bg-white border border-gray-300 rounded-xl shadow-lg max-h-96 overflow-y-auto z-10">
                 {filteredPackages.length > 0 ? (
                   <div className="p-2">
