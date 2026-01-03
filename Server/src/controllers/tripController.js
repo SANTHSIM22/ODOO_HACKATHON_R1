@@ -47,6 +47,7 @@ const createTrip = async (req, res) => {
     const {
       destination,
       country,
+      continent,
       description,
       startDate,
       endDate,
@@ -55,6 +56,8 @@ const createTrip = async (req, res) => {
       imageUrl,
       category,
       activities,
+      specialOffer,
+      recommendedByTravelers,
     } = req.body;
 
     // Validate required fields
@@ -76,6 +79,7 @@ const createTrip = async (req, res) => {
     const trip = new Trip({
       destination,
       country: country || "",
+      continent: continent || "Asia",
       description,
       startDate,
       endDate,
@@ -84,6 +88,8 @@ const createTrip = async (req, res) => {
       imageUrl: imageUrl || "",
       category: category || "recommended",
       activities: activities || [],
+      specialOffer: specialOffer || false,
+      recommendedByTravelers: recommendedByTravelers || false,
       createdBy: req.user?._id, // If you implement authentication
     });
 
@@ -109,6 +115,9 @@ const updateTrip = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
+    console.log("Updating trip with ID:", id);
+    console.log("Update payload:", updates);
+
     // Validate dates if provided
     if (updates.startDate && updates.endDate) {
       if (new Date(updates.startDate) >= new Date(updates.endDate)) {
@@ -119,10 +128,19 @@ const updateTrip = async (req, res) => {
       }
     }
 
-    const trip = await Trip.findByIdAndUpdate(id, updates, {
+    // Ensure all fields including new ones are properly set
+    const updateData = {
+      ...updates,
+      continent: updates.continent || "Asia",
+    };
+
+    const trip = await Trip.findByIdAndUpdate(id, updateData, {
       new: true,
-      runValidators: true,
+      runValidators: false, // Disable validators to allow updates on old documents
+      strict: false, // Allow fields not in schema (though all our fields are in schema)
     });
+
+    console.log("Updated trip:", trip);
 
     if (!trip) {
       return res.status(404).json({

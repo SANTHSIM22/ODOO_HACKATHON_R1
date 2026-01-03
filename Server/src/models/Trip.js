@@ -13,6 +13,21 @@ const tripSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    continent: {
+      type: String,
+      enum: [
+        "Africa",
+        "Antarctica",
+        "Asia",
+        "Europe",
+        "North America",
+        "Oceania",
+        "South America",
+        "",
+      ],
+      default: "Asia",
+      required: false,
+    },
     description: {
       type: String,
       required: true,
@@ -46,6 +61,14 @@ const tripSchema = new mongoose.Schema(
     activities: {
       type: [String],
       default: [],
+    },
+    specialOffer: {
+      type: Number,
+      default: 0,
+    },
+    recommendedByTravelers: {
+      type: Boolean,
+      default: false,
     },
     isActive: {
       type: Boolean,

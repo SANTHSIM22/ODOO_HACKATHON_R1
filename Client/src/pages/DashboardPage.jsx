@@ -45,6 +45,8 @@ function DashboardPage() {
         image: trip.image,
         imageUrl: trip.imageUrl,
         category: trip.category,
+        specialOffer: trip.specialOffer,
+        recommendedByTravelers: trip.recommendedByTravelers,
       }));
       setAvailableTrips(formattedTrips);
     } catch (error) {
@@ -434,6 +436,24 @@ function DashboardPage() {
                         {trip.description}
                       </p>
                     )}
+
+                    {/* Special Badges */}
+                    {(trip.specialOffer > 0 || trip.recommendedByTravelers) && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {trip.specialOffer > 0 && (
+                          <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full flex items-center gap-1">
+                            🎁 Special Offer: $
+                            {trip.specialOffer.toLocaleString()}
+                          </span>
+                        )}
+                        {trip.recommendedByTravelers && (
+                          <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full flex items-center gap-1">
+                            ⭐ Recommended by Travelers
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-sm text-gray-600">
                         <span className="mr-2 font-semibold">📍</span>

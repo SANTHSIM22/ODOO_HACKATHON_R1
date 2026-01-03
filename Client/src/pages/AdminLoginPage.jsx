@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLogin from "../components/AdminLogin";
+import AnimatedBackground from "../components/layout/AnimatedBackground";
 
 function AdminLoginPage() {
     const navigate = useNavigate();
@@ -18,7 +19,9 @@ function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center p-4">
+        <div className="min-h-screen relative flex items-center justify-center p-4">
+            <AnimatedBackground />
+
             <div className="w-full max-w-md">
                 <div className="text-center mb-6">
                     <Link
