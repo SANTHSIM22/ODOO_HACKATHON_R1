@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { MapPin, Star, ChevronDown, Clock } from "lucide-react";
 
 const ActivitySearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -7,16 +8,34 @@ const ActivitySearchPage = () => {
     const [sortBy, setSortBy] = useState("Recommended");
     const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
     const [minRating, setMinRating] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [selectedDuration, setSelectedDuration] = useState("All");
+    const [addedActivities, setAddedActivities] = useState(new Set());
+
+    const toggleActivity = (id) => {
+        setAddedActivities(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(id)) {
+                newSet.delete(id);
+            } else {
+                newSet.add(id);
+            }
+            return newSet;
+        });
+    };
 
     // Mock Data
     const activities = [
-        { id: 1, title: "Paragliding in Alps", location: "Interlaken, Switzerland", price: 150, rating: 4.8, image: "https://via.placeholder.com/600x200" },
-        { id: 2, title: "Scuba Diving", location: "Great Barrier Reef, Australia", price: 200, rating: 4.9, image: "https://via.placeholder.com/600x200" },
-        { id: 3, title: "City Walking Tour", location: "Rome, Italy", price: 30, rating: 4.5, image: "https://via.placeholder.com/600x200" },
-        { id: 4, title: "Desert Safari", location: "Dubai, UAE", price: 80, rating: 4.7, image: "https://via.placeholder.com/600x200" },
-        { id: 5, title: "Northern Lights Tour", location: "Reykjavik, Iceland", price: 120, rating: 4.9, image: "https://via.placeholder.com/600x200" },
-        { id: 6, title: "Sushi Making Class", location: "Tokyo, Japan", price: 60, rating: 4.6, image: "https://via.placeholder.com/600x200" },
+        { id: 1, title: "Paragliding in Alps", location: "Interlaken, Switzerland", price: 150, rating: 4.8, category: "Adventure", duration: "3 hours", image: "https://via.placeholder.com/600x200" },
+        { id: 2, title: "Scuba Diving", location: "Great Barrier Reef, Australia", price: 200, rating: 4.9, category: "Adventure", duration: "5 hours", image: "https://via.placeholder.com/600x200" },
+        { id: 3, title: "City Walking Tour", location: "Rome, Italy", price: 30, rating: 4.5, category: "Sightseeing", duration: "2 hours", image: "https://via.placeholder.com/600x200" },
+        { id: 4, title: "Desert Safari", location: "Dubai, UAE", price: 80, rating: 4.7, category: "Adventure", duration: "6 hours", image: "https://via.placeholder.com/600x200" },
+        { id: 5, title: "Northern Lights Tour", location: "Reykjavik, Iceland", price: 120, rating: 4.9, category: "Sightseeing", duration: "4 hours", image: "https://via.placeholder.com/600x200" },
+        { id: 6, title: "Sushi Making Class", location: "Tokyo, Japan", price: 60, rating: 4.6, category: "Food & Drink", duration: "2.5 hours", image: "https://via.placeholder.com/600x200" },
     ];
+
+    const categories = ["All", ...new Set(activities.map(a => a.category))];
+    const durations = ["All", ...new Set(activities.map(a => a.duration))];
 
     // Processing Logic
     let processedActivities = activities.filter(activity =>
@@ -25,7 +44,12 @@ const ActivitySearchPage = () => {
     );
 
     // Filtering
-    // Filtering
+    if (selectedCategory !== "All") {
+        processedActivities = processedActivities.filter(a => a.category === selectedCategory);
+    }
+    if (selectedDuration !== "All") {
+        processedActivities = processedActivities.filter(a => a.duration === selectedDuration);
+    }
     if (priceRange.min > 0 || priceRange.max < 1000) {
         processedActivities = processedActivities.filter(a => a.price >= priceRange.min && a.price <= priceRange.max);
     }
@@ -86,7 +110,7 @@ const ActivitySearchPage = () => {
                                     className={`px-5 py-2.5 rounded-full border transition whitespace-nowrap font-bold flex items-center gap-2 ${groupBy !== "None" ? "bg-brand-medium text-white border-transparent" : "bg-brand-pale text-brand-dark border-transparent hover:bg-brand-medium hover:text-white"}`}
                                 >
                                     Group by: {groupBy}
-                                    <span className="text-xs">▼</span>
+                                    <ChevronDown size={14} />
                                 </button>
                                 {activeDropdown === "group" && (
                                     <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 z-50">
@@ -107,13 +131,39 @@ const ActivitySearchPage = () => {
                             <div className="relative">
                                 <button
                                     onClick={() => toggleDropdown("filter")}
-                                    className={`px-5 py-2.5 rounded-full border transition whitespace-nowrap font-bold flex items-center gap-2 ${(priceRange.min > 0 || priceRange.max < 1000 || minRating > 0) ? "bg-brand-medium text-white border-transparent" : "bg-brand-pale text-brand-dark border-transparent hover:bg-brand-medium hover:text-white"}`}
+                                    className={`px-5 py-2.5 rounded-full border transition whitespace-nowrap font-bold flex items-center gap-2 ${(priceRange.min > 0 || priceRange.max < 1000 || minRating > 0 || selectedCategory !== "All" || selectedDuration !== "All") ? "bg-brand-medium text-white border-transparent" : "bg-brand-pale text-brand-dark border-transparent hover:bg-brand-medium hover:text-white"}`}
                                 >
                                     Filters
-                                    <span className="text-xs">▼</span>
+                                    <ChevronDown size={14} />
                                 </button>
                                 {activeDropdown === "filter" && (
-                                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-4 z-50">
+                                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-4 z-50 max-h-[80vh] overflow-y-auto">
+                                        <div className="mb-4">
+                                            <h4 className="font-bold text-gray-700 mb-2">Category</h4>
+                                            <select
+                                                value={selectedCategory}
+                                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-brand-medium bg-white"
+                                            >
+                                                {categories.map(cat => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <h4 className="font-bold text-gray-700 mb-2">Duration</h4>
+                                            <select
+                                                value={selectedDuration}
+                                                onChange={(e) => setSelectedDuration(e.target.value)}
+                                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-brand-medium bg-white"
+                                            >
+                                                {durations.map(dur => (
+                                                    <option key={dur} value={dur}>{dur}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
                                         <div className="mb-4">
                                             <h4 className="font-bold text-gray-700 mb-2">Price Range</h4>
                                             <div className="flex items-center gap-2">
@@ -141,9 +191,9 @@ const ActivitySearchPage = () => {
                                                     <button
                                                         key={rating}
                                                         onClick={() => setMinRating(minRating === rating ? 0 : rating)}
-                                                        className={`flex-1 py-2 rounded-lg text-sm font-bold transition ${minRating === rating ? "bg-brand-medium text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                                                        className={`flex-1 py-2 rounded-lg text-sm font-bold transition flex items-center justify-center gap-1 ${minRating === rating ? "bg-brand-medium text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
                                                     >
-                                                        {rating}+ ⭐
+                                                        {rating}+ <Star size={12} className={minRating === rating ? "fill-white" : "fill-gray-600"} />
                                                     </button>
                                                 ))}
                                             </div>
@@ -158,6 +208,8 @@ const ActivitySearchPage = () => {
                                             onClick={() => {
                                                 setPriceRange({ min: 0, max: 1000 });
                                                 setMinRating(0);
+                                                setSelectedCategory("All");
+                                                setSelectedDuration("All");
                                             }}
                                             className="w-full mt-2 py-2 text-gray-500 hover:text-brand-dark text-sm font-medium transition"
                                         >
@@ -174,7 +226,7 @@ const ActivitySearchPage = () => {
                                     className={`px-5 py-2.5 rounded-full border transition whitespace-nowrap font-bold flex items-center gap-2 ${sortBy !== "Recommended" ? "bg-brand-medium text-white border-transparent" : "bg-brand-pale text-brand-dark border-transparent hover:bg-brand-medium hover:text-white"}`}
                                 >
                                     Sort by: {sortBy}
-                                    <span className="text-xs">▼</span>
+                                    <ChevronDown size={14} />
                                 </button>
                                 {activeDropdown === "sort" && (
                                     <div className="absolute top-full right-0 md:left-auto md:right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 z-50">
@@ -217,18 +269,40 @@ const ActivitySearchPage = () => {
                                                 </div>
 
                                                 <div className="flex-grow">
-                                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-dark transition mb-2">{activity.title}</h3>
-                                                    <p className="text-gray-500 mb-3 flex items-center">
-                                                        <span className="mr-2">📍</span> {activity.location}
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-dark transition mb-1">{activity.title}</h3>
+                                                            <p className="text-gray-500 mb-2 flex items-center text-sm">
+                                                                <MapPin size={14} className="mr-1 text-gray-400" /> {activity.location}
+                                                            </p>
+                                                        </div>
+                                                        <span className="px-2 py-1 bg-brand-pale/30 rounded text-xs font-bold text-brand-dark">
+                                                            {activity.category}
+                                                        </span>
+                                                    </div>
+
+                                                    <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+                                                        Experience the thrill of {activity.title} in {activity.location}. Duration: {activity.duration}. Perfect for {activity.category} lovers.
                                                     </p>
+
                                                     <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                                        <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-700 font-medium flex items-center gap-1"><Clock size={14} /> {activity.duration}</span>
                                                         <span className="bg-brand-pale/30 px-3 py-1 rounded-full text-brand-dark font-medium">${activity.price}</span>
-                                                        <span className="flex items-center">⭐ {activity.rating}</span>
+                                                        <span className="flex items-center gap-1"><Star size={14} className="fill-brand-dark text-brand-dark" /> {activity.rating}</span>
                                                     </div>
                                                 </div>
 
-                                                <div className="self-end sm:self-center mt-4 sm:mt-0">
-                                                    <button className="px-6 py-2 rounded-lg bg-white border border-brand-medium text-brand-medium hover:bg-brand-medium hover:text-white transition font-medium">
+                                                <div className="self-end sm:self-center mt-4 sm:mt-0 flex flex-col gap-2">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleActivity(activity.id);
+                                                        }}
+                                                        className={`px-6 py-2 rounded-lg transition font-medium shadow-sm hover:shadow ${addedActivities.has(activity.id) ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100" : "bg-brand-medium text-white hover:bg-brand-dark"}`}
+                                                    >
+                                                        {addedActivities.has(activity.id) ? "Remove" : "Add to Trip"}
+                                                    </button>
+                                                    <button className="text-sm text-gray-400 hover:text-brand-medium underline">
                                                         View Details
                                                     </button>
                                                 </div>
@@ -248,18 +322,40 @@ const ActivitySearchPage = () => {
                                         </div>
 
                                         <div className="flex-grow">
-                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-dark transition mb-2">{activity.title}</h3>
-                                            <p className="text-gray-500 mb-3 flex items-center">
-                                                <span className="mr-2">📍</span> {activity.location}
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-dark transition mb-1">{activity.title}</h3>
+                                                    <p className="text-gray-500 mb-2 flex items-center text-sm">
+                                                        <MapPin size={14} className="mr-1 text-gray-400" /> {activity.location}
+                                                    </p>
+                                                </div>
+                                                <span className="px-2 py-1 bg-brand-pale/30 rounded text-xs font-bold text-brand-dark">
+                                                    {activity.category}
+                                                </span>
+                                            </div>
+
+                                            <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+                                                Experience the thrill of {activity.title} in {activity.location}. Duration: {activity.duration}. Perfect for {activity.category} lovers.
                                             </p>
+
                                             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                                <span className="bg-gray-100 px-3 py-1 rounded-full text-gray-700 font-medium flex items-center gap-1"><Clock size={14} /> {activity.duration}</span>
                                                 <span className="bg-brand-pale/30 px-3 py-1 rounded-full text-brand-dark font-medium">${activity.price}</span>
-                                                <span className="flex items-center">⭐ {activity.rating}</span>
+                                                <span className="flex items-center gap-1"><Star size={14} className="fill-brand-dark text-brand-dark" /> {activity.rating}</span>
                                             </div>
                                         </div>
 
-                                        <div className="self-end sm:self-center mt-4 sm:mt-0">
-                                            <button className="px-6 py-2 rounded-lg bg-white border border-brand-medium text-brand-medium hover:bg-brand-medium hover:text-white transition font-medium">
+                                        <div className="self-end sm:self-center mt-4 sm:mt-0 flex flex-col gap-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleActivity(activity.id);
+                                                }}
+                                                className={`px-6 py-2 rounded-lg transition font-medium shadow-sm hover:shadow ${addedActivities.has(activity.id) ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100" : "bg-brand-medium text-white hover:bg-brand-dark"}`}
+                                            >
+                                                {addedActivities.has(activity.id) ? "Remove" : "Add to Trip"}
+                                            </button>
+                                            <button className="text-sm text-gray-400 hover:text-brand-medium underline">
                                                 View Details
                                             </button>
                                         </div>
