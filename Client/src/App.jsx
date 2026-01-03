@@ -11,6 +11,8 @@ import MyTripsPage from "./pages/MyTripsPage";
 import CustomTripPage from "./pages/CustomTripPage";
 import ActivitySearchPage from "./pages/ActivitySearchPage";
 import CitySearchPage from "./pages/CitySearchPage";
+import TripDetailPage from "./pages/TripDetailPage";
+import ItineraryViewPage from "./pages/ItineraryViewPage";
 import "./App.css";
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
         <Route path="/custom-trip" element={<CustomTripPage />} />
         <Route path="/search" element={<ActivitySearchPage />} />
         <Route path="/cities" element={<CitySearchPage />} />
+        <Route path="/trip/:tripId" element={<TripDetailPage />} />
+        <Route path="/trip/:tripId/itinerary" element={<ItineraryViewPage />} />
       </Routes>
     </Router>
   );
