@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Login from "../components/Login";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -9,6 +10,19 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Lock scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -36,114 +50,115 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Main Container */}
-      <div className="relative z-10 w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30">
-              <span className="text-white font-bold text-xl">G</span>
-            </div>
-            <h1 className="text-3xl font-bold text-black">GlobeTrotter</h1>
-          </div>
-          <p className="text-black text-sm">Plan your perfect journey</p>
+    <div className="min-h-screen bg-white">
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+
+      <main className="pt-24 pb-12 flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-red-50">
+        {/* Background Decorations */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-red-100 rounded-full opacity-30 blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-200 rounded-full opacity-20 blur-3xl animate-pulse-slow delay-200"></div>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-2xl">
-          <h2 className="text-2xl font-bold text-black mb-2">Welcome Back</h2>
-          <p className="text-black text-sm mb-6">
-            Sign in to continue planning your adventures
-          </p>
+        {/* Main Container */}
+        <div className="relative z-10 w-full max-w-md">
+          
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-600 text-sm">
-              {error}
-            </div>
-          )}
+          {/* Login Card */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+            <p className="text-gray-600 text-sm mb-6">
+              Sign in to continue planning your adventures
+            </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-black mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
-              />
-            </div>
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm">
+                {error}
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-black mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
+                </label>
                 <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 bg-white text-red-600 cursor-pointer"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
                 />
-                <span className="text-black">Remember me</span>
-              </label>
-              <Link
-                to="#"
-                className="text-red-600 hover:text-red-700 transition-colors"
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-medium"
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                  />
+                  <span className="text-gray-600 font-medium">Remember me</span>
+                </label>
+                <Link
+                  to="#"
+                  className="text-red-700 hover:text-red-800 font-semibold transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-bold rounded-xl transition-all duration-300 shadow-xl shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6 active:scale-[0.98]"
               >
-                Forgot password?
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Signing in...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+            </form>
+
+            <p className="text-center text-gray-600 text-sm mt-8">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="text-red-700 hover:text-red-800 font-bold transition-colors"
+              >
+                Create one
               </Link>
-            </div>
+            </p>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-red-600/30 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Signing in...
-                </span>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-
-
-          <p className="text-center text-black text-sm mt-6">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-red-600 hover:text-red-700 font-semibold transition-colors"
-            >
-              Create one
-            </Link>
-          </p>
+          {/* Trust Badge */}
+          <div className="mt-8 text-center animate-fade-in-up">
+            <p className="text-gray-500 text-xs flex items-center justify-center gap-2">
+              <span className="text-green-500">✓</span> Secure login • Your data is encrypted
+            </p>
+          </div>
         </div>
+      </main>
 
-        {/* Trust Badge */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 text-xs flex items-center justify-center gap-2">
-            <span>✓</span> Secure login • Your data is encrypted
-          </p>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

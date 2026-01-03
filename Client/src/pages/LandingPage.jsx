@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 function LandingPage() {
   const [isVisible, setIsVisible] = useState({});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const sectionRefs = useRef({});
 
   useEffect(() => {
@@ -44,231 +47,22 @@ function LandingPage() {
     if (el) sectionRefs.current[id] = el;
   };
 
+  // Lock scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Custom Styles */}
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
 
-        @keyframes fadeInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeInRight {
-          from {
-            opacity: 0;
-            transform: translateX(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-
-        @keyframes pulse-slow {
-          0%, 100% {
-            opacity: 0.4;
-          }
-          50% {
-            opacity: 0.8;
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in-down {
-          animation: fadeInDown 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in-left {
-          animation: fadeInLeft 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in-right {
-          animation: fadeInRight 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        .animate-scale-in {
-          animation: scaleIn 0.8s ease-out forwards;
-        }
-
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
-        .delay-600 { animation-delay: 0.6s; }
-        .delay-700 { animation-delay: 0.7s; }
-        .delay-800 { animation-delay: 0.8s; }
-
-        .opacity-0-initial {
-          opacity: 0;
-        }
-
-        .gradient-text {
-          background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .hover-lift {
-          transition: all 0.3s ease;
-        }
-
-        .hover-lift:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .glass-effect {
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-        }
-
-        .line-decoration::after {
-          content: '';
-          position: absolute;
-          bottom: -8px;
-          left: 0;
-          width: 60px;
-          height: 4px;
-          background: linear-gradient(90deg, #b91c1c, #ef4444);
-          border-radius: 2px;
-        }
-      `}</style>
-
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3 animate-fade-in-left">
-            <div className="w-11 h-11 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
-              <span className="text-white font-bold text-xl">G</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-                GlobeTrotter
-              </h1>
-              <p className="text-xs text-gray-500 -mt-0.5">Travel Planning</p>
-            </div>
-          </div>
-          <nav className="hidden lg:flex items-center space-x-10 animate-fade-in-down">
-            <a
-              href="#features"
-              className="text-gray-600 hover:text-red-700 font-medium transition-all duration-300 text-sm relative group"
-            >
-              Features
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-700 transition-all duration-300 group-hover:w-full"></span>
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-gray-600 hover:text-red-700 font-medium transition-all duration-300 text-sm relative group"
-            >
-              How It Works
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-700 transition-all duration-300 group-hover:w-full"></span>
-            </a>
-            <a
-              href="#about"
-              className="text-gray-600 hover:text-red-700 font-medium transition-all duration-300 text-sm relative group"
-            >
-              About
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-700 transition-all duration-300 group-hover:w-full"></span>
-            </a>
-            <a
-              href="#testimonials"
-              className="text-gray-600 hover:text-red-700 font-medium transition-all duration-300 text-sm relative group"
-            >
-              Testimonials
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-700 transition-all duration-300 group-hover:w-full"></span>
-            </a>
-          </nav>
-          <div className="flex items-center space-x-4 animate-fade-in-right">
-            <Link
-              to="/login"
-              className="px-5 py-2.5 text-gray-700 hover:text-red-700 font-medium transition-all duration-300 text-sm"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/register"
-              className="px-6 py-2.5 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-900 transition-all duration-300 font-medium text-sm shadow-lg shadow-red-200 hover:shadow-xl hover:shadow-red-300"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
       <main>
         {/* Hero Section - Full Screen */}
@@ -546,9 +340,8 @@ function LandingPage() {
         <section
           id="stats"
           ref={addToRefs("stats")}
-          className={`border-y border-gray-100 bg-white transition-all duration-1000 ${
-            isVisible.stats ? "opacity-100" : "opacity-0"
-          }`}
+          className={`border-y border-gray-100 bg-white transition-all duration-1000 ${isVisible.stats ? "opacity-100" : "opacity-0"
+            }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -560,9 +353,8 @@ function LandingPage() {
               ].map((stat, i) => (
                 <div
                   key={i}
-                  className={`text-center transition-all duration-700 ${
-                    isVisible.stats ? "animate-fade-in-up" : "opacity-0"
-                  }`}
+                  className={`text-center transition-all duration-700 ${isVisible.stats ? "animate-fade-in-up" : "opacity-0"
+                    }`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <p className="text-4xl lg:text-5xl font-bold gradient-text">
@@ -580,9 +372,8 @@ function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div
-                className={`transition-all duration-1000 ${
-                  isVisible.about ? "animate-fade-in-left" : "opacity-0"
-                }`}
+                className={`transition-all duration-1000 ${isVisible.about ? "animate-fade-in-left" : "opacity-0"
+                  }`}
               >
                 <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
                   Our Vision
@@ -622,9 +413,8 @@ function LandingPage() {
               </div>
 
               <div
-                className={`grid grid-cols-2 gap-5 transition-all duration-1000 ${
-                  isVisible.about ? "animate-fade-in-right" : "opacity-0"
-                }`}
+                className={`grid grid-cols-2 gap-5 transition-all duration-1000 ${isVisible.about ? "animate-fade-in-right" : "opacity-0"
+                  }`}
               >
                 {[
                   {
@@ -731,9 +521,8 @@ function LandingPage() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div
-              className={`text-center mb-20 transition-all duration-1000 ${
-                isVisible.features ? "animate-fade-in-up" : "opacity-0"
-              }`}
+              className={`text-center mb-20 transition-all duration-1000 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"
+                }`}
             >
               <p className="text-red-700 font-semibold mb-4 tracking-wide uppercase text-sm">
                 Platform Features
@@ -873,9 +662,8 @@ function LandingPage() {
               ].map((feature, i) => (
                 <div
                   key={i}
-                  className={`bg-white rounded-2xl p-8 border border-gray-100 hover-lift transition-all duration-700 ${
-                    isVisible.features ? "animate-fade-in-up" : "opacity-0"
-                  }`}
+                  className={`bg-white rounded-2xl p-8 border border-gray-100 hover-lift transition-all duration-700 ${isVisible.features ? "animate-fade-in-up" : "opacity-0"
+                    }`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
                   <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl flex items-center justify-center mb-6 border border-red-100">
@@ -906,9 +694,8 @@ function LandingPage() {
           </div>
 
           <div
-            className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 transition-all duration-1000 ${
-              isVisible.cta ? "animate-fade-in-up" : "opacity-0"
-            }`}
+            className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 transition-all duration-1000 ${isVisible.cta ? "animate-fade-in-up" : "opacity-0"
+              }`}
           >
             <div className="text-center max-w-3xl mx-auto">
               <h3 className="text-4xl lg:text-5xl font-bold text-white mb-6">
@@ -950,132 +737,7 @@ function LandingPage() {
         </section>
       </main>
 
-      {/* Compact Footer - White/Red Theme */}
-      {/* Footer - Elegant Centered Design */}
-      <footer className="bg-gradient-to-b from-gray-50 to-white">
-        {/* Red Accent Line */}
-        <div className="h-1 bg-gradient-to-r from-red-600 via-red-700 to-red-800"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          {/* Main Footer Content */}
-          <div className="text-center mb-8">
-            {/* Logo */}
-            <div className="inline-flex items-center justify-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
-                <span className="text-white font-bold text-xl">G</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">
-                GlobeTrotter
-              </span>
-            </div>
-
-            {/* Tagline */}
-            <p className="text-gray-500 text-sm max-w-md mx-auto">
-              Empowering travelers to plan unforgettable journeys with
-              intelligent tools and seamless experiences.
-            </p>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-8">
-            {["Features", "About", "How It Works", "Privacy", "Terms"].map(
-              (item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="text-sm text-gray-600 hover:text-red-700 transition-colors duration-200"
-                >
-                  {item}
-                </a>
-              )
-            )}
-          </nav>
-
-          {/* Social Links */}
-          <div className="flex justify-center space-x-4 mb-8">
-            {[
-              {
-                name: "Twitter",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                  </svg>
-                ),
-              },
-              {
-                name: "LinkedIn",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                  </svg>
-                ),
-              },
-              {
-                name: "Instagram",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                ),
-              },
-              {
-                name: "GitHub",
-                icon: (
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                ),
-              },
-            ].map((social) => (
-              <a
-                key={social.name}
-                href="#"
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-red-700 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
-                aria-label={social.name}
-              >
-                {social.icon}
-              </a>
-            ))}
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-200 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-gray-400">
-              © 2025 GlobeTrotter. Made with ❤️ for travelers worldwide.
-            </p>
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-xs text-gray-500 hover:text-red-700 transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="text-xs px-4 py-2 bg-gradient-to-r from-red-700 to-red-800 text-white rounded-full hover:from-red-800 hover:to-red-900 transition-all shadow-md shadow-red-200"
-              >
-                Start Free
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
