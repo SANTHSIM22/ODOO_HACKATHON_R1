@@ -5,6 +5,7 @@ function DashboardPage() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
@@ -36,11 +37,11 @@ function DashboardPage() {
 
     // Top Regional Selections data
     const regionalSelections = [
-        { id: 1, name: "Europe", image: "🇪🇺" },
-        { id: 2, name: "Asia", image: "🌏" },
-        { id: 3, name: "Americas", image: "🌎" },
-        { id: 4, name: "Africa", image: "🌍" },
-        { id: 5, name: "Oceania", image: "🏝️" }
+        { id: 1, name: "Europe", image: "" },
+        { id: 2, name: "Asia", image: "" },
+        { id: 3, name: "Americas", image: "" },
+        { id: 4, name: "Africa", image: "" },
+        { id: 5, name: "Oceania", image: "" }
     ];
 
     // Previous Trips data
@@ -49,19 +50,19 @@ function DashboardPage() {
             id: 1,
             destination: "Paris, France",
             date: "Dec 2025",
-            image: "🗼"
+            image: ""
         },
         {
             id: 2,
             destination: "Tokyo, Japan",
             date: "Nov 2025",
-            image: "🗾"
+            image: ""
         },
         {
             id: 3,
             destination: "New York, USA",
             date: "Oct 2025",
-            image: "🗽"
+            image: ""
         }
     ];
 
@@ -72,13 +73,43 @@ function DashboardPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-3">
-                            <span className="text-3xl">🌍</span>
                             <h1 className="text-2xl font-bold text-[#CD2C58]">GlobeTrotter</h1>
                         </div>
-                        <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 rounded-full bg-[#E06B80] flex items-center justify-center text-white font-semibold">
+                        <div className="relative">
+                            <div
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                className="w-10 h-10 rounded-full bg-[#E06B80] flex items-center justify-center text-white font-semibold cursor-pointer hover:bg-[#CD2C58] transition duration-200"
+                            >
                                 {user.name.charAt(0).toUpperCase()}
                             </div>
+
+                            {/* Dropdown Menu */}
+                            {isDropdownOpen && (
+                                <>
+                                    {/* Backdrop to close dropdown when clicking outside */}
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setIsDropdownOpen(false)}
+                                    ></div>
+
+                                    {/* Dropdown Content */}
+                                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-[#E06B80] z-20 overflow-hidden">
+                                        {/* User Info Section */}
+                                        <div className="px-4 py-3 bg-gradient-to-r from-[#FFE6D4] to-[#FFC69D] border-b border-[#E06B80]">
+                                            <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+                                            <p className="text-xs text-gray-600 mt-1">{user.email}</p>
+                                        </div>
+
+                                        {/* Logout Button */}
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-[#FFE6D4] transition duration-200"
+                                        >
+                                            <span className="font-medium">Logout</span>
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -87,8 +118,16 @@ function DashboardPage() {
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Banner Section */}
-                <div className="mb-6 bg-gradient-to-r from-[#CD2C58] to-[#E06B80] rounded-2xl shadow-lg overflow-hidden h-48 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+                <div className="mb-6 rounded-2xl shadow-lg overflow-hidden h-48 flex items-center justify-center relative bg-gradient-to-r from-[#CD2C58] to-[#E06B80]">
+                    {/* Image placeholder - replace bannerImage with actual image URL */}
+                    {false ? ( // Change to: {bannerImage ? (
+                        <>
+                            <img src="" alt="Banner" className="absolute inset-0 w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                        </>
+                    ) : (
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#CD2C58] to-[#E06B80]"></div>
+                    )}
                     <div className="relative z-10 text-center text-white">
                         <h2 className="text-4xl font-bold mb-2">Discover Your Next Adventure</h2>
                         <p className="text-lg opacity-90">Explore the world with GlobeTrotter</p>
@@ -130,8 +169,12 @@ function DashboardPage() {
                                 key={region.id}
                                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border-2 border-transparent hover:border-[#E06B80]"
                             >
-                                <div className="aspect-square bg-gradient-to-br from-[#FFC69D] to-[#FFE6D4] flex items-center justify-center text-6xl">
-                                    {region.image}
+                                <div className="aspect-square bg-gradient-to-br from-[#FFC69D] to-[#FFE6D4] flex items-center justify-center overflow-hidden">
+                                    {region.image ? (
+                                        <img src={region.image} alt={region.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="text-gray-400 text-sm">Image placeholder</div>
+                                    )}
                                 </div>
                                 <div className="p-4 text-center">
                                     <h4 className="font-bold text-gray-800">{region.name}</h4>
@@ -152,8 +195,12 @@ function DashboardPage() {
                                 key={trip.id}
                                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 border-2 border-transparent hover:border-[#E06B80]"
                             >
-                                <div className="h-40 bg-gradient-to-br from-[#CD2C58] to-[#E06B80] flex items-center justify-center text-7xl">
-                                    {trip.image}
+                                <div className="h-40 bg-gradient-to-br from-[#CD2C58] to-[#E06B80] flex items-center justify-center overflow-hidden">
+                                    {trip.image ? (
+                                        <img src={trip.image} alt={trip.destination} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="text-white text-sm">Image placeholder</div>
+                                    )}
                                 </div>
                                 <div className="p-5">
                                     <h4 className="text-lg font-bold text-gray-800 mb-1">
@@ -170,9 +217,8 @@ function DashboardPage() {
                 <div className="flex justify-end mb-8">
                     <button
                         onClick={handlePlanNewTrip}
-                        className="bg-[#CD2C58] text-white px-6 py-3 rounded-full hover:bg-[#E06B80] transition duration-300 font-semibold shadow-lg flex items-center space-x-2 transform hover:scale-105"
+                        className="bg-[#CD2C58] text-white px-6 py-3 rounded-full hover:bg-[#E06B80] transition duration-300 font-semibold shadow-lg transform hover:scale-105"
                     >
-                        <span className="text-xl">➕</span>
                         <span>Plan a trip</span>
                     </button>
                 </div>
@@ -182,7 +228,7 @@ function DashboardPage() {
             <footer className="bg-white mt-12 border-t-2 border-[#E06B80]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <p className="text-center text-gray-600 text-sm">
-                        © 2026 GlobeTrotter. Your journey begins here. 🌍
+                        © 2026 GlobeTrotter. Your journey begins here.
                     </p>
                 </div>
             </footer>
