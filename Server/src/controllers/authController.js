@@ -3,12 +3,24 @@ const User = require("../models/User");
 const authController = {
   register: async (req, res) => {
     try {
-      const { email, password, name, username } = req.body;
+      const {
+        email,
+        password,
+        firstName,
+        lastName,
+        username,
+        phoneNumber,
+        city,
+        country,
+        additionalInfo,
+        profileImage,
+      } = req.body;
 
-      if (!email || !password || !name || !username) {
+      if (!email || !password || !firstName || !lastName || !username) {
         return res.status(400).json({
           success: false,
-          message: "Please provide name, username, email, and password",
+          message:
+            "Please provide firstName, lastName, username, email, and password",
         });
       }
 
@@ -20,7 +32,9 @@ const authController = {
         });
       }
 
-      const existingUsername = await User.findOne({ username: username.toLowerCase() });
+      const existingUsername = await User.findOne({
+        username: username.toLowerCase(),
+      });
       if (existingUsername) {
         return res.status(400).json({
           success: false,
@@ -29,10 +43,17 @@ const authController = {
       }
 
       const newUser = await User.create({
-        name,
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`,
         username,
         email,
         password,
+        phoneNumber,
+        city,
+        country,
+        additionalInfo,
+        profileImage,
       });
 
       res.status(201).json({
@@ -104,7 +125,9 @@ const authController = {
 
       // Check if admin credentials are set in environment
       if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
-        console.error("Admin credentials not configured in environment variables");
+        console.error(
+          "Admin credentials not configured in environment variables"
+        );
         return res.status(500).json({
           success: false,
           message: "Admin login is not configured",

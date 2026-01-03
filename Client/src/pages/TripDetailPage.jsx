@@ -189,7 +189,11 @@ function TripDetailPage() {
     const newActivityBudget =
       parseFloat(activityData.budget?.replace(/[^0-9.-]+/g, "")) || 0;
 
-    if (currentActivityTotal + newActivityBudget > destinationBudget) {
+    // Only validate budget if destination has a budget set (greater than 0)
+    if (
+      destinationBudget > 0 &&
+      currentActivityTotal + newActivityBudget > destinationBudget
+    ) {
       alert(
         `Activity budget exceeds destination budget!\nDestination budget: $${destinationBudget}\nCurrent activities: $${currentActivityTotal.toFixed(
           2
@@ -207,6 +211,7 @@ function TripDetailPage() {
         ...(updatedDestinations[index].activities || []),
         {
           name: activityData.name,
+          day: activityData.day ? parseInt(activityData.day) : undefined,
           time: activityData.time,
           budget: activityData.budget || "0",
         },
@@ -314,7 +319,17 @@ function TripDetailPage() {
                   {trip.tripName}
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  {new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {new Date(trip.startDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}{" "}
+                  -{" "}
+                  {new Date(trip.endDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
             </div>
@@ -344,11 +359,15 @@ function TripDetailPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Trip Overview
           </h2>
-          <p className="text-gray-700 mb-6 text-base leading-relaxed">{trip.description}</p>
+          <p className="text-gray-700 mb-6 text-base leading-relaxed">
+            {trip.description}
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">Duration</p>
+              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
+                Duration
+              </p>
               <p className="text-4xl font-bold text-red-600">
                 {Math.ceil(
                   (new Date(trip.endDate) - new Date(trip.startDate)) /
@@ -358,14 +377,18 @@ function TripDetailPage() {
               <p className="text-gray-600 text-sm mt-1">days</p>
             </div>
             <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">Destinations</p>
+              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
+                Destinations
+              </p>
               <p className="text-4xl font-bold text-red-600">
                 {trip.destinations?.length || 0}
               </p>
               <p className="text-gray-600 text-sm mt-1">sections</p>
             </div>
             <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200 shadow-sm hover:shadow-md transition">
-              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">Activities</p>
+              <p className="text-gray-700 text-sm font-semibold mb-2 uppercase tracking-wide">
+                Activities
+              </p>
               <p className="text-4xl font-bold text-red-600">
                 {trip.destinations?.reduce(
                   (sum, dest) => sum + (dest.activities?.length || 0),
@@ -379,13 +402,6 @@ function TripDetailPage() {
 
         {/* Sections/Destinations */}
         <div className="space-y-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">Destinations & Activities</h2>
-            <span className="text-sm text-gray-600 bg-red-50 border border-red-200 px-3 py-1 rounded-full font-semibold">
-              {trip.destinations?.length || 0} sections
-            </span>
-          </div>
-
           {trip.destinations &&
             trip.destinations.map((destination, index) => {
               const isEditing = editingSection === index;
@@ -394,38 +410,37 @@ function TripDetailPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:border-red-300"
+                  className="bg-white rounded-2xl shadow-md border-2 border-gray-200 p-8 hover:shadow-lg transition"
                 >
                   {/* Section Header */}
-                  <div className="bg-red-50 p-6 border-b-2 border-red-200">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-sm font-bold text-white bg-red-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-md">
-                            {index + 1}
-                          </span>
-                          {isEditing ? (
-                            <input
-                              type="text"
-                              value={
-                                edits.name !== undefined
-                                  ? edits.name
-                                  : destination.name
-                              }
-                              onChange={(e) =>
-                                handleSectionFieldChange(
-                                  index,
-                                  "name",
-                                  e.target.value
-                                )
-                              }
-                              className="text-2xl font-bold text-gray-900 flex-1 px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                            />
-                          ) : (
-                            <h3 className="text-2xl font-bold text-gray-900">
-                              {destination.name}
-                            </h3>
-                          )}
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-sm font-bold text-white bg-red-600 rounded-full w-8 h-8 flex items-center justify-center">
+                          {index + 1}
+                        </span>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={
+                              edits.name !== undefined
+                                ? edits.name
+                                : destination.name
+                            }
+                            onChange={(e) =>
+                              handleSectionFieldChange(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            className="text-2xl font-bold text-black flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                          />
+                        ) : (
+                          <h3 className="text-2xl font-bold text-black">
+                            {destination.name}
+                          </h3>
+                        )}
                       </div>
                       {isEditing ? (
                         <textarea
@@ -489,7 +504,7 @@ function TripDetailPage() {
                   </div>
 
                   {/* Section Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 pb-6 border-b border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-white border-b-2 border-gray-200">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                         Start Date
@@ -513,15 +528,17 @@ function TripDetailPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                         />
                       ) : (
-                        <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-800 font-medium">
-                          {destination.startDate
-                            ? new Date(
-                                destination.startDate
-                              ).toLocaleDateString()
-                            : "Not set"}
+                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
+                          {destination.startDate ? (
+                            new Date(destination.startDate).toLocaleDateString()
+                          ) : (
+                            <span className="text-gray-500 italic">
+                              Click Edit to set date
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -548,13 +565,17 @@ function TripDetailPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                         />
                       ) : (
-                        <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-800 font-medium">
-                          {destination.endDate
-                            ? new Date(destination.endDate).toLocaleDateString()
-                            : "Not set"}
+                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
+                          {destination.endDate ? (
+                            new Date(destination.endDate).toLocaleDateString()
+                          ) : (
+                            <span className="text-gray-500 italic">
+                              Click Edit to set date
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -578,43 +599,65 @@ function TripDetailPage() {
                             )
                           }
                           placeholder="$0"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                          className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                         />
                       ) : (
-                        <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-800 font-medium">
-                          {destination.budget || "$0"}
+                        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-gray-900 font-medium">
+                          {destination.budget &&
+                          destination.budget !== "$0" &&
+                          destination.budget !== "0" ? (
+                            destination.budget
+                          ) : (
+                            <span className="text-gray-500 italic">
+                              No budget set
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Activities Section */}
-                  <div>
-                    <h4 className="text-lg font-bold text-black mb-4">
+                  <div className="p-6 bg-white">
+                    <h4 className="text-lg font-bold text-gray-900 mb-4 uppercase tracking-wide">
                       Activities ({destination.activities?.length || 0})
                     </h4>
-                    
+
                     {destination.activities &&
                     destination.activities.length > 0 ? (
                       <div className="space-y-3 mb-6">
                         {destination.activities.map((activity, actIndex) => (
                           <div
                             key={actIndex}
-                            className="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition"
+                            className="flex items-start justify-between p-4 bg-red-50 rounded-lg border-2 border-red-200 hover:border-red-300 transition-all"
                           >
                             <div className="flex-1">
-                              <p className="font-semibold text-black">
+                              <p className="font-semibold text-gray-900">
                                 {typeof activity === "string"
                                   ? activity
                                   : activity.name}
                               </p>
                               {typeof activity === "object" && (
-                                <div className="flex gap-6 mt-2 text-sm text-gray-600">
+                                <div className="flex gap-6 mt-2 text-sm text-gray-700">
+                                  {activity.day && (
+                                    <span>
+                                      <span className="font-medium uppercase tracking-wide">
+                                        Day:
+                                      </span>{" "}
+                                      {activity.day}
+                                    </span>
+                                  )}
                                   <span>
-                                    <span className="font-medium">Time:</span> {activity.time}
+                                    <span className="font-medium uppercase tracking-wide">
+                                      Time:
+                                    </span>{" "}
+                                    {activity.time}
                                   </span>
                                   <span>
-                                    <span className="font-medium">Budget:</span> ${activity.budget || "0"}
+                                    <span className="font-medium uppercase tracking-wide">
+                                      Budget:
+                                    </span>{" "}
+                                    ${activity.budget || "0"}
                                   </span>
                                 </div>
                               )}
@@ -623,7 +666,7 @@ function TripDetailPage() {
                               onClick={() =>
                                 handleDeleteActivity(index, actIndex)
                               }
-                              className="text-red-600 hover:text-red-700 font-bold text-lg ml-4 flex-shrink-0"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-100 font-bold text-xl w-8 h-8 rounded-lg ml-4 flex-shrink-0 flex items-center justify-center transition-all"
                             >
                               ×
                             </button>
@@ -631,14 +674,18 @@ function TripDetailPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 mb-6 italic">No activities added yet</p>
+                      <p className="text-gray-500 mb-6 italic bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        No activities added yet
+                      </p>
                     )}
 
                     {/* Add Activity Form */}
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                      <p className="text-sm font-semibold text-gray-700 mb-3">Add New Activity</p>
+                    <div className="bg-red-50 rounded-lg p-5 border-2 border-red-200">
+                      <p className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">
+                        Add New Activity
+                      </p>
                       <div className="space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                           <input
                             type="text"
                             value={newActivityData[index]?.name || ""}
@@ -652,7 +699,23 @@ function TripDetailPage() {
                               })
                             }
                             placeholder="Activity name"
-                            className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="px-4 py-2 text-sm border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
+                          />
+                          <input
+                            type="number"
+                            value={newActivityData[index]?.day || ""}
+                            onChange={(e) =>
+                              setNewActivityData({
+                                ...newActivityData,
+                                [index]: {
+                                  ...(newActivityData[index] || {}),
+                                  day: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="Day #"
+                            min="1"
+                            className="px-4 py-2 text-sm border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                           />
                           <input
                             type="time"
@@ -666,7 +729,7 @@ function TripDetailPage() {
                                 },
                               })
                             }
-                            className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="px-4 py-2 text-sm border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                           />
                           <input
                             type="text"
@@ -681,36 +744,42 @@ function TripDetailPage() {
                               })
                             }
                             placeholder="Budget ($)"
-                            className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                            className="px-4 py-2 text-sm border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                           />
                         </div>
                         <button
                           onClick={() => handleAddActivity(index)}
-                          className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm font-semibold"
+                          className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all text-sm font-semibold uppercase tracking-wide shadow-md hover:shadow-lg"
                         >
                           Add Activity
                         </button>
-                        {destination.budget && (
-                          <div className="text-xs text-gray-600 bg-white rounded px-3 py-2">
-                            <span className="font-semibold">Available budget:</span> $
-                            {(
-                              (parseFloat(
-                                destination.budget?.replace(/[^0-9.-]+/g, "")
-                              ) || 0) -
-                              (destination.activities || []).reduce(
-                                (sum, act) =>
-                                  sum +
-                                  (parseFloat(
-                                    (typeof act === "object"
-                                      ? act.budget
-                                      : "0"
-                                    )?.replace(/[^0-9.-]+/g, "")
-                                  ) || 0),
-                                0
-                              )
-                            ).toFixed(2)}
-                          </div>
-                        )}
+                        {destination.budget &&
+                          parseFloat(
+                            destination.budget?.replace(/[^0-9.-]+/g, "")
+                          ) > 0 && (
+                            <div className="text-xs text-gray-700 bg-white border border-red-200 rounded-lg px-3 py-2">
+                              <span className="font-semibold uppercase tracking-wide">
+                                Available budget:
+                              </span>{" "}
+                              $
+                              {(
+                                (parseFloat(
+                                  destination.budget?.replace(/[^0-9.-]+/g, "")
+                                ) || 0) -
+                                (destination.activities || []).reduce(
+                                  (sum, act) =>
+                                    sum +
+                                    (parseFloat(
+                                      (typeof act === "object"
+                                        ? act.budget
+                                        : "0"
+                                      )?.replace(/[^0-9.-]+/g, "")
+                                    ) || 0),
+                                  0
+                                )
+                              ).toFixed(2)}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -722,19 +791,19 @@ function TripDetailPage() {
           {!showAddSection ? (
             <button
               onClick={() => setShowAddSection(true)}
-              className="w-full py-6 border-2 border-dashed border-gray-300 rounded-2xl text-gray-600 hover:border-red-600 hover:text-red-600 transition font-semibold text-lg"
+              className="w-full py-6 border-2 border-dashed border-red-300 rounded-2xl text-gray-600 hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-all font-semibold text-lg uppercase tracking-wide"
             >
               + Add Another Section
             </button>
           ) : (
-            <div className="bg-white rounded-2xl shadow-md border-2 border-red-300 p-8">
-              <h3 className="text-2xl font-bold text-black mb-6">
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-red-300 p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 uppercase tracking-wide">
                 New Section
               </h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                     Section Name <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -744,13 +813,13 @@ function TripDetailPage() {
                       setNewSection({ ...newSection, name: e.target.value })
                     }
                     placeholder="e.g., Paris, Tokyo, Beach Resort"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                    className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                       Start Date <span className="text-red-600">*</span>
                     </label>
                     <input
@@ -772,11 +841,11 @@ function TripDetailPage() {
                           ? new Date(trip.endDate).toISOString().split("T")[0]
                           : ""
                       }
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                      className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-black mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                       End Date <span className="text-red-600">*</span>
                     </label>
                     <input
@@ -799,13 +868,13 @@ function TripDetailPage() {
                           ? new Date(trip.endDate).toISOString().split("T")[0]
                           : ""
                       }
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                      className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                     Budget
                   </label>
                   <input
@@ -815,12 +884,12 @@ function TripDetailPage() {
                       setNewSection({ ...newSection, budget: e.target.value })
                     }
                     placeholder="e.g., $1000"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                    className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-black mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
                     Description
                   </label>
                   <textarea
@@ -833,14 +902,14 @@ function TripDetailPage() {
                     }
                     placeholder="Add notes about this section..."
                     rows="3"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+                    className="w-full px-4 py-3 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none bg-white"
                   />
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={handleAddSection}
-                    className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition font-semibold"
+                    className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-all font-semibold uppercase tracking-wide shadow-md hover:shadow-lg"
                   >
                     Add Section
                   </button>
@@ -855,7 +924,7 @@ function TripDetailPage() {
                         description: "",
                       });
                     }}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-semibold uppercase tracking-wide"
                   >
                     Cancel
                   </button>

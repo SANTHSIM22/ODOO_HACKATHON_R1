@@ -61,8 +61,15 @@ function RegisterPage() {
     setIsLoading(true);
 
     // Validation
-    const requiredFields = ['firstName', 'lastName', 'email', 'username', 'password', 'confirmPassword'];
-    const hasEmptyField = requiredFields.some(field => !formData[field]);
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "username",
+      "password",
+      "confirmPassword",
+    ];
+    const hasEmptyField = requiredFields.some((field) => !formData[field]);
 
     if (hasEmptyField) {
       setError("Please fill in all required fields");
@@ -82,16 +89,47 @@ function RegisterPage() {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      const userData = {
-        ...formData,
-        name: `${formData.firstName} ${formData.lastName}`,
-        profileImage: imagePreview
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      navigate("/dashboard");
-    }, 1000);
+    // Real API call
+    const API_URL = "http://localhost:5000/api/auth";
+
+    fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        city: formData.city,
+        country: formData.country,
+        additionalInfo: formData.additionalInfo,
+        profileImage: imagePreview,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setIsLoading(false);
+        if (data.success) {
+          const userData = {
+            ...data.user,
+            name: `${formData.firstName} ${formData.lastName}`,
+            profileImage: imagePreview,
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          navigate("/dashboard");
+        } else {
+          setError(data.message || "Registration failed");
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.error("Registration error:", error);
+        setError("Network error. Please try again.");
+      });
   };
 
   return (
@@ -111,7 +149,9 @@ function RegisterPage() {
 
         {/* Register Card */}
         <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-2xl">
-          <h2 className="text-2xl font-bold text-black mb-2 text-center">Create Account</h2>
+          <h2 className="text-2xl font-bold text-black mb-2 text-center">
+            Create Account
+          </h2>
           <p className="text-black text-sm mb-6 text-center">
             Join thousands of travelers planning their journeys
           </p>
@@ -165,7 +205,9 @@ function RegisterPage() {
             {/* Personal Details Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-black mb-2">First Name</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  First Name
+                </label>
                 <input
                   type="text"
                   name="firstName"
@@ -176,7 +218,9 @@ function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Last Name</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Last Name
+                </label>
                 <input
                   type="text"
                   name="lastName"
@@ -191,7 +235,9 @@ function RegisterPage() {
             {/* Contact Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Email Address</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Email Address
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -202,7 +248,9 @@ function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Phone Number</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Phone Number
+                </label>
                 <input
                   type="tel"
                   name="phoneNumber"
@@ -217,7 +265,9 @@ function RegisterPage() {
             {/* Location Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-black mb-2">City</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  City
+                </label>
                 <input
                   type="text"
                   name="city"
@@ -228,7 +278,9 @@ function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Country</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Country
+                </label>
                 <input
                   type="text"
                   name="country"
@@ -242,7 +294,9 @@ function RegisterPage() {
 
             {/* Additional Info */}
             <div>
-              <label className="block text-sm font-medium text-black mb-2">Additional Information</label>
+              <label className="block text-sm font-medium text-black mb-2">
+                Additional Information
+              </label>
               <textarea
                 name="additionalInfo"
                 value={formData.additionalInfo}
@@ -255,7 +309,9 @@ function RegisterPage() {
 
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-black mb-2">Username</label>
+              <label className="block text-sm font-medium text-black mb-2">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
@@ -269,7 +325,9 @@ function RegisterPage() {
             {/* Password Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Password</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -280,7 +338,9 @@ function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Confirm Password</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Confirm Password
+                </label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -299,8 +359,17 @@ function RegisterPage() {
                 id="terms"
                 className="w-4 h-4 rounded border-gray-300 bg-white text-red-600 cursor-pointer mt-1"
               />
-              <label htmlFor="terms" className="text-xs text-black cursor-pointer">
-                I agree to the <Link to="#" className="text-red-600 hover:text-red-700 font-semibold">Terms & Conditions</Link>
+              <label
+                htmlFor="terms"
+                className="text-xs text-black cursor-pointer"
+              >
+                I agree to the{" "}
+                <Link
+                  to="#"
+                  className="text-red-600 hover:text-red-700 font-semibold"
+                >
+                  Terms & Conditions
+                </Link>
               </label>
             </div>
 
@@ -322,7 +391,13 @@ function RegisterPage() {
 
           {/* Sign In Link */}
           <p className="text-center text-black text-sm mt-6">
-            Already have an account? <Link to="/login" className="text-red-600 hover:text-red-700 font-semibold transition-colors">Login here</Link>
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-red-600 hover:text-red-700 font-semibold transition-colors"
+            >
+              Login here
+            </Link>
           </p>
         </div>
 

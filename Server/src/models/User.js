@@ -3,9 +3,18 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
+    firstName: {
+      type: String,
+      required: [true, "Please provide a first name"],
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      required: [true, "Please provide a last name"],
+      trim: true,
+    },
     name: {
       type: String,
-      required: [true, "Please provide a name"],
       trim: true,
     },
     username: {
@@ -31,6 +40,25 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please provide a password"],
       minlength: 6,
     },
+    phoneNumber: {
+      type: String,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+    },
+    country: {
+      type: String,
+      trim: true,
+    },
+    additionalInfo: {
+      type: String,
+      trim: true,
+    },
+    profileImage: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -46,11 +74,9 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
-
 
 userSchema.methods.toJSON = function () {
   const user = this.toObject();
