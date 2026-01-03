@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 function Navbar({ isMobileMenuOpen, setIsMobileMenuOpen }) {
     const navLinks = [
         { label: "Features", href: "/#features" },
-        { label: "How It Works", href: "/#how-it-works" },
         { label: "About", href: "/#about" },
         { label: "Testimonials", href: "/#testimonials" },
     ];
