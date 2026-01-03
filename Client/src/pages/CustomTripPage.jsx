@@ -186,7 +186,7 @@ function CustomTripPage() {
                 </div>
 
                 <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-3">💡 Custom Trip Planning Tips</h3>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-3"> Custom Trip Planning Tips</h3>
                     <ul className="space-y-2 text-sm text-slate-600">
                         <li className="flex items-start">
                             <span className="mr-2">✓</span>
