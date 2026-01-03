@@ -1,7 +1,7 @@
 {
-  "name": "client",
+  "name": "globe-trotter",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.01",
   "type": "module",
   "scripts": {
     "dev": "vite",
