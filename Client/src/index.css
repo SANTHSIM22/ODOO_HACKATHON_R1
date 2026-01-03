@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-dark: #CD2C58;
+  --color-brand-medium: #E06B80;
+  --color-brand-light: #FFC69D;
+  --color-brand-pale: #FFE6D4;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -15,9 +22,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
