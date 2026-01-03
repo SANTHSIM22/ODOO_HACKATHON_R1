@@ -9,6 +9,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import CreateTripPage from "./pages/CreateTripPage";
 import MyTripsPage from "./pages/MyTripsPage";
 import CustomTripPage from "./pages/CustomTripPage";
+import ActivitySearchPage from "./pages/ActivitySearchPage";
 import "./App.css";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/create-trip" element={<CreateTripPage />} />
         <Route path="/my-trips" element={<MyTripsPage />} />
         <Route path="/custom-trip" element={<CustomTripPage />} />
+        <Route path="/search" element={<ActivitySearchPage />} />
       </Routes>
     </Router>
   );
