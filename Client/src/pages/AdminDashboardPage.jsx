@@ -13,6 +13,7 @@ function AdminDashboardPage() {
   const [formData, setFormData] = useState({
     destination: "",
     country: "",
+    continent: "Asia",
     description: "",
     startDate: "",
     endDate: "",
@@ -21,6 +22,8 @@ function AdminDashboardPage() {
     imageUrl: "",
     category: "recommended",
     activities: [],
+    specialOffer: 0,
+    recommendedByTravelers: false,
   });
 
   useEffect(() => {
@@ -56,9 +59,10 @@ function AdminDashboardPage() {
   };
 
   const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: type === "number" ? Number(value) || 0 : value,
     });
   };
 
@@ -72,6 +76,8 @@ function AdminDashboardPage() {
         : `${API_URL}/trips`;
 
       const method = editingTrip ? "PUT" : "POST";
+
+      console.log("Submitting form data:", formData);
 
       const response = await fetch(url, {
         method,
@@ -94,6 +100,7 @@ function AdminDashboardPage() {
         setFormData({
           destination: "",
           country: "",
+          continent: "Asia",
           description: "",
           startDate: "",
           endDate: "",
@@ -102,6 +109,8 @@ function AdminDashboardPage() {
           imageUrl: "",
           category: "recommended",
           activities: [],
+          specialOffer: 0,
+          recommendedByTravelers: false,
         });
         fetchTrips();
       } else {
@@ -120,6 +129,7 @@ function AdminDashboardPage() {
     setFormData({
       destination: trip.destination,
       country: trip.country || "",
+      continent: trip.continent || "Asia",
       description: trip.description,
       startDate: trip.startDate.split("T")[0],
       endDate: trip.endDate.split("T")[0],
@@ -128,6 +138,11 @@ function AdminDashboardPage() {
       imageUrl: trip.imageUrl,
       category: trip.category,
       activities: trip.activities || [],
+      specialOffer: trip.specialOffer !== undefined ? trip.specialOffer : 0,
+      recommendedByTravelers:
+        trip.recommendedByTravelers !== undefined
+          ? trip.recommendedByTravelers
+          : false,
     });
     setShowAddForm(true);
   };
@@ -179,6 +194,7 @@ function AdminDashboardPage() {
     setFormData({
       destination: "",
       country: "",
+      continent: "Asia",
       description: "",
       startDate: "",
       endDate: "",
@@ -187,6 +203,8 @@ function AdminDashboardPage() {
       imageUrl: "",
       category: "recommended",
       activities: [],
+      specialOffer: 0,
+      recommendedByTravelers: false,
     });
   };
 
@@ -303,6 +321,27 @@ function AdminDashboardPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Continent *
+                  </label>
+                  <select
+                    name="continent"
+                    value={formData.continent}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    <option value="Africa">Africa</option>
+                    <option value="Antarctica">Antarctica</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Europe">Europe</option>
+                    <option value="North America">North America</option>
+                    <option value="Oceania">Oceania</option>
+                    <option value="South America">South America</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Budget ($) *
                   </label>
                   <input
@@ -377,6 +416,44 @@ function AdminDashboardPage() {
                     <option value="popular">Popular</option>
                     <option value="featured">Featured</option>
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Special Offer Price ($)
+                  </label>
+                  <input
+                    type="number"
+                    name="specialOffer"
+                    value={formData.specialOffer}
+                    onChange={handleInputChange}
+                    min="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Enter special price (0 = no offer)"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Leave as 0 if no special offer
+                  </p>
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="recommendedByTravelers"
+                      checked={formData.recommendedByTravelers}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          recommendedByTravelers: e.target.checked,
+                        })
+                      }
+                      className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      Recommended by Travelers
+                    </span>
+                  </label>
                 </div>
               </div>
 
